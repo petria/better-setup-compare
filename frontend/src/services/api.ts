@@ -16,7 +16,7 @@ export const getTracks = async (carId: number): Promise<Track[]> => {
     return response.json();
 };
 
-export const getSetups = async (carName: string, trackName: string): Promise<Setup[]> => {
-    const response = await fetch(`/api/cars/${carName}/tracks/${trackName}/setups`);
+export const getSetups = async (carId: number, trackId: number): Promise<Setup[]> => {
+    const response = await fetch(`/api/cars/${carId}/tracks/${trackId}/setups`);
     return response.json();
 };

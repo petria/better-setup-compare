@@ -37,7 +37,7 @@ const CompareSetups: React.FC = () => {
         setSelectedTrack(track);
         setSelectedSetup(null);
         if (selectedCar && track) {
-            getSetups(selectedCar.name, track.name).then(setSetups);
+            getSetups(selectedCar.id, track.id).then(setSetups);
         } else {
             setSetups([]);
         }
