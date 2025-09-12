@@ -44,4 +44,9 @@ public class DataController {
     return setupsService.getSetupListForCarAndTrack(carFolderName, trackFolderName);
   }
 
+  @GetMapping("/setups/{setupId}")
+  public List<String> getSetupById(@PathVariable long setupId) {
+    return setupsService.getSetupById(setupId);
+  }
+
 }

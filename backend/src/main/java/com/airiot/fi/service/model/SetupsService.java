@@ -1,15 +1,13 @@
 package com.airiot.fi.service.model;
 
 import com.airiot.fi.service.model.carselector.*;
-import com.airiot.fi.service.model.scan.Car;
-import com.airiot.fi.service.model.scan.SetupIniFileScanStats;
-import com.airiot.fi.service.model.scan.SetupScanResults;
-import com.airiot.fi.service.model.scan.Track;
+import com.airiot.fi.service.model.scan.*;
 import com.airiot.fi.reader.SetupFilesReader;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.awt.datatransfer.SystemFlavorMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -35,8 +33,9 @@ public class SetupsService {
     private long trackIdCounter = 0;
 
     private long iniIdCounter = 0;
+    private Map<Long, SetupIniFile> setupIdMap = new HashMap<>();
 
-    public SetupsService(SetupFilesReader reader) throws IOException {
+  public SetupsService(SetupFilesReader reader) throws IOException {
         this.reader = reader;
     }
 
@@ -131,6 +130,15 @@ public class SetupsService {
                     String pathToIni = path + "/" + iniFile;
                     trackModel.getIniFilesMap().put(iniFile, pathToIni);
                     results.getIniFilesMap().put(iniFile, pathToIni);
+
+                  SetupIniFile setupIniFile = new SetupIniFile();
+                  setupIniFile.setSetupFullPath(pathToIni);
+                  setupIniFile.setId(uniqueSetupFiles);
+                  setupIniFile.setCarFolderName(carModel.getCarFolderName());
+                  setupIniFile.setTrackFolderName(trackModel.getTrackFolderName());
+
+                  this.setupIdMap.put(setupIniFile.getId(), setupIniFile);
+
                 }
 
 
@@ -141,12 +149,12 @@ public class SetupsService {
         }
         long scanTime = System.currentTimeMillis() - start;
 
-        log.debug("Setup INIs : {}", uniqueSetupFiles);
+        log.debug("Setup INIs : {}", setupIdMap.size());
         log.debug("Car dirs   : {}", carDirNames.size());
         log.debug("Track dirs : {}", trackDirNames.size());
         log.debug("Scan time  : {} ms", scanTime);
 
-        stats.setUniqueSetupFiles(uniqueSetupFiles);
+        stats.setUniqueSetupFiles(setupIdMap.size());
         stats.setCarDirs(carDirNames.size());
         stats.setTrackDirs(trackDirNames.size());
         stats.setScanTime(scanTime);
@@ -180,10 +188,7 @@ public class SetupsService {
     }
 
     public List<CarForSelection> getCarListForSelection() {
-
         List<Car> carList1 = getCarList();
-
-        //       List<Car> carList = getCarList().stream().filter(car -> car.getIniFileCount() > 0).toList();
         return carList1.stream().map(this::convertToCarForSelection).collect(Collectors.toList());
     }
 
@@ -198,14 +203,6 @@ public class SetupsService {
         return forSelection;
     }
 
-    public TrackListForCarResponse getTrackListForCar(String carFolderName) {
-        TrackListForCarResponse response
-                = TrackListForCarResponse.builder()
-                .trackList(getTrackByFolderName(carFolderName))
-                .build();
-
-        return response;
-    }
 
     public List<TrackForCarSelection> getTrackByFolderName(String carFolderName) {
         Car car = this.setupsMap.get(carFolderName);
@@ -239,7 +236,6 @@ public class SetupsService {
                 Stream<String> sorted = track.getIniFilesMap().keySet().stream().sorted();
                 int id = 0;
                 for (String setupKeyName : sorted.toList()) {
-//                    String setupName = track.getIniFilesMap().get(setupKeyName);
                     SetupForCarSelection forCarSelection
                             = SetupForCarSelection.builder()
                             .id(id++)
@@ -251,6 +247,19 @@ public class SetupsService {
         }
       return list;
     }
+
+  public List<String> getSetupById(long setupId) {
+    SetupIniFile setupIniFile = this.setupIdMap.get(setupId);
+    if (setupIniFile != null) {
+      try {
+        return reader.readSetupFile(setupIniFile.getSetupFullPath());
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return new ArrayList<>();
+  }
+
 
 
     private void compare() throws IOException {
