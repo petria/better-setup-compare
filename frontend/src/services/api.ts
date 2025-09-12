@@ -1,4 +1,4 @@
-import {Car, Setup, Track} from '../types';
+import {CarForSelection, SetupForCarSelection, TrackForCarSelection} from '../types';
 
 export const getHello = async (): Promise<string> => {
     const response = await fetch('/api/hello');
@@ -6,17 +6,17 @@ export const getHello = async (): Promise<string> => {
     return data;
 };
 
-export const getCars = async (): Promise<Car[]> => {
+export const getCars = async (): Promise<CarForSelection[]> => {
     const response = await fetch('/api/cars');
     return response.json();
 };
 
-export const getTracks = async (carId: number): Promise<Track[]> => {
-    const response = await fetch(`/api/cars/${carId}/tracks`);
+export const getTracks = async (carFolderName: string): Promise<TrackForCarSelection[]> => {
+    const response = await fetch(`/api/cars/${carFolderName}/tracks`);
     return response.json();
 };
 
-export const getSetups = async (carId: number, trackId: number): Promise<Setup[]> => {
-    const response = await fetch(`/api/cars/${carId}/tracks/${trackId}/setups`);
+export const getSetups = async (carFolderName: string, trackFolderName: string): Promise<SetupForCarSelection[]> => {
+    const response = await fetch(`/api/cars/${carFolderName}/tracks/${trackFolderName}/setups`);
     return response.json();
 };

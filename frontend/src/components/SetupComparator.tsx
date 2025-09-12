@@ -1,19 +1,19 @@
 import React, {useState} from 'react';
-import {Car, Setup, Track} from '../types';
+import {CarForSelection, SetupForCarSelection, TrackForCarSelection} from '../types';
 import SelectedSetup from './SelectedSetup';
 import {Button} from 'react-bootstrap';
 
 interface SetupComparatorProps {
-    selectedCar: Car | null;
-    selectedTrack: Track | null;
-    selectedSetup: Setup | null;
+    selectedCar: CarForSelection | null;
+    selectedTrack: TrackForCarSelection | null;
+    selectedSetup: SetupForCarSelection | null;
 }
 
 interface ComparisonItem {
     id: number;
-    car: Car;
-    track: Track;
-    setup: Setup;
+    car: CarForSelection;
+    track: TrackForCarSelection;
+    setup: SetupForCarSelection;
 }
 
 const SetupComparator: React.FC<SetupComparatorProps> = ({selectedCar, selectedTrack, selectedSetup}) => {

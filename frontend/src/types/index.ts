@@ -1,3 +1,23 @@
+export interface SetupForCarSelection {
+    id: number;
+    setupIniFileName : string;
+}
+
+
+export interface TrackForCarSelection {
+    id: number;
+    trackName : string;
+    trackFolderName : string;
+    iniFileCount: number;
+}
+
+export interface CarForSelection {
+    id: number;
+    carTracksWithSetup : number;
+    carName : string;
+    carFolderName: string;
+}
+
 export interface Setup {
     id: number;
     name: string;

@@ -1,0 +1,18 @@
+package com.airiot.fi.service.model.carselector;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class SetupListForCarAndTrackResponse {
+
+    private List<SetupForCarSelection> setupList;
+}
