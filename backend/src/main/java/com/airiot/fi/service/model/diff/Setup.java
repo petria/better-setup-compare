@@ -1,4 +1,3 @@
-
 package com.airiot.fi.service.model.diff;
 
 import com.fasterxml.jackson.annotation.*;
@@ -18,65 +17,65 @@ import java.util.Map;
 @Generated("jsonschema2pojo")
 public class Setup {
 
-    @JsonProperty("id")
-    private Integer id;
-    @JsonProperty("iniFile")
-    private String iniFile;
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("diffs")
-    private List<Diff> diffs;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+  @JsonProperty("id")
+  private Integer id;
+  @JsonProperty("iniFile")
+  private String iniFile;
+  @JsonProperty("name")
+  private String name;
+  @JsonProperty("diffs")
+  private List<Diff> diffs;
+  @JsonIgnore
+  private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-    @JsonProperty("id")
-    public Integer getId() {
-        return id;
-    }
+  @JsonProperty("id")
+  public Integer getId() {
+    return id;
+  }
 
-    @JsonProperty("id")
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  @JsonProperty("id")
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    @JsonProperty("iniFile")
-    public String getIniFile() {
-        return iniFile;
-    }
+  @JsonProperty("iniFile")
+  public String getIniFile() {
+    return iniFile;
+  }
 
-    @JsonProperty("iniFile")
-    public void setIniFile(String iniFile) {
-        this.iniFile = iniFile;
-    }
+  @JsonProperty("iniFile")
+  public void setIniFile(String iniFile) {
+    this.iniFile = iniFile;
+  }
 
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
+  @JsonProperty("name")
+  public String getName() {
+    return name;
+  }
 
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
+  @JsonProperty("name")
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    @JsonProperty("diffs")
-    public List<Diff> getDiffs() {
-        return diffs;
-    }
+  @JsonProperty("diffs")
+  public List<Diff> getDiffs() {
+    return diffs;
+  }
 
-    @JsonProperty("diffs")
-    public void setDiffs(List<Diff> diffs) {
-        this.diffs = diffs;
-    }
+  @JsonProperty("diffs")
+  public void setDiffs(List<Diff> diffs) {
+    this.diffs = diffs;
+  }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+  @JsonAnyGetter
+  public Map<String, Object> getAdditionalProperties() {
+    return this.additionalProperties;
+  }
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+  @JsonAnySetter
+  public void setAdditionalProperty(String name, Object value) {
+    this.additionalProperties.put(name, value);
+  }
 
 }

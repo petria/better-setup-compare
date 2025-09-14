@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 public class CarForSelection {
 
-    private long id;
-    private long carTracksWithSetup;
-    private String carName;
-    private String carFolderName;
+  private long id;
+  private long carTracksWithSetup;
+  private String carName;
+  private String carFolderName;
 
 
 }

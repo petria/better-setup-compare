@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class IniSections {
 
-    private String name;
+  private String name;
 
-    private String selected;
+  private String selected;
 
 }

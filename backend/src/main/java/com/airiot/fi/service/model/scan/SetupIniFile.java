@@ -7,15 +7,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SetupIniFile {
 
-    private long id;
+  private long id;
 
-    private String carFolderName;
+  private String carFolderName;
 
-    private String trackFolderName;
+  private String trackFolderName;
 
-    private String setupIniFileName;
+  private String setupIniFileName;
 
-    private String setupFullPath;
+  private String setupFullPath;
 
 
 }

@@ -1,20 +1,24 @@
+export interface AiChatRequest {
+    prompt: string;
+}
+
 export interface SetupForCarSelection {
     id: number;
-    setupIniFileName : string;
+    setupIniFileName: string;
 }
 
 
 export interface TrackForCarSelection {
     id: number;
-    trackName : string;
-    trackFolderName : string;
+    trackName: string;
+    trackFolderName: string;
     iniFileCount: number;
 }
 
 export interface CarForSelection {
     id: number;
-    carTracksWithSetup : number;
-    carName : string;
+    carTracksWithSetup: number;
+    carName: string;
     carFolderName: string;
 }
 

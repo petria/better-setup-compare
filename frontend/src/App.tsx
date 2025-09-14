@@ -10,6 +10,7 @@ import Navigation from './components/Navigation';
 import AdminPage from './components/AdminPage';
 import AdminRoute from './components/AdminRoute';
 import CompareSetups from './components/CompareSetups';
+import AiChat from './components/AiChat';
 
 const App: React.FC = () => {
     return (
@@ -48,6 +49,12 @@ const AppContent: React.FC = () => {
                         path="/compare-setupDtos"
                         element={<PrivateRoute>
                             <CompareSetups/>
+                        </PrivateRoute>}
+                    />
+                    <Route
+                        path="/ai-chat"
+                        element={<PrivateRoute>
+                            <AiChat/>
                         </PrivateRoute>}
                     />
                 </Routes>

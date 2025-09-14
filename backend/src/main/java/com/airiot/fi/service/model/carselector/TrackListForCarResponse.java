@@ -10,6 +10,6 @@ import java.util.List;
 @Data
 public class TrackListForCarResponse {
 
-    private List<TrackForCarSelection> trackList;
+  private List<TrackForCarSelection> trackList;
 
 }

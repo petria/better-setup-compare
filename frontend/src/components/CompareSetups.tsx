@@ -62,7 +62,7 @@ const CompareSetups: React.FC = () => {
 
     return (
         <div>
-            <h1>Compare Setups</h1>
+            <h1>Setup selector</h1>
             <Form>
                 <Form.Group className="mb-3">
                     <Form.Label>Car</Form.Label>
@@ -78,7 +78,8 @@ const CompareSetups: React.FC = () => {
                     <Form.Select onChange={handleCarChange} value={selectedCar?.carFolderName || ''}>
                         <option>Select a car</option>
                         {filteredCars.map(car => (
-                            <option key={car.carFolderName} value={car.carFolderName}>{car.carFolderName}</option>
+                            <option key={car.carFolderName}
+                                    value={car.carFolderName}>{car.carFolderName} [{car.carTracksWithSetup}]</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
@@ -93,12 +94,15 @@ const CompareSetups: React.FC = () => {
                             onChange={e => setTrackFilter(e.target.value)}
                             disabled={!selectedCar}
                         />
-                        <Button variant="outline-secondary" onClick={() => setTrackFilter('')} disabled={!selectedCar}>Clear</Button>
+                        <Button variant="outline-secondary" onClick={() => setTrackFilter('')}
+                                disabled={!selectedCar}>Clear</Button>
                     </div>
-                    <Form.Select onChange={handleTrackChange} disabled={!selectedCar} value={selectedTrack?.trackFolderName || ''}>
+                    <Form.Select onChange={handleTrackChange} disabled={!selectedCar}
+                                 value={selectedTrack?.trackFolderName || ''}>
                         <option>Select a track</option>
                         {filteredTracks.map(track => (
-                            <option key={track.trackFolderName} value={track.trackFolderName}>{track.trackFolderName}</option>
+                            <option key={track.trackFolderName}
+                                    value={track.trackFolderName}>{track.trackFolderName}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
@@ -113,12 +117,15 @@ const CompareSetups: React.FC = () => {
                             onChange={e => setSetupFilter(e.target.value)}
                             disabled={!selectedTrack}
                         />
-                        <Button variant="outline-secondary" onClick={() => setSetupFilter('')} disabled={!selectedTrack}>Clear</Button>
+                        <Button variant="outline-secondary" onClick={() => setSetupFilter('')}
+                                disabled={!selectedTrack}>Clear</Button>
                     </div>
-                    <Form.Select onChange={handleSetupChange} disabled={!selectedTrack} value={selectedSetup?.setupIniFileName || ''}>
+                    <Form.Select onChange={handleSetupChange} disabled={!selectedTrack}
+                                 value={selectedSetup?.setupIniFileName || ''}>
                         <option>Select a setup</option>
                         {filteredSetups.map(setup => (
-                            <option key={setup.setupIniFileName} value={setup.setupIniFileName}>{setup.setupIniFileName}</option>
+                            <option key={setup.setupIniFileName}
+                                    value={setup.setupIniFileName}>{setup.setupIniFileName}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>

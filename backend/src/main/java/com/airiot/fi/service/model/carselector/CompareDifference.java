@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 public class CompareDifference {
 
-    private List<String> differences;
+  private List<String> differences;
 }

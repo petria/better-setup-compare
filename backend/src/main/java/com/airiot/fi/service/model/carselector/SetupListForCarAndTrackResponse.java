@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class SetupListForCarAndTrackResponse {
 
-    private List<SetupForCarSelection> setupList;
+  private List<SetupForCarSelection> setupList;
 }

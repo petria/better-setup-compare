@@ -10,11 +10,11 @@ import java.util.Map;
 @NoArgsConstructor
 public class Car {
 
-    private long id;
-    private String carName;
-    private String carFolderName;
-    private long iniFileCount = 0;
-    private Map<String, Track> tracksWithSetup = new HashMap<>();
+  private long id;
+  private String carName;
+  private String carFolderName;
+  private long iniFileCount = 0;
+  private Map<String, Track> tracksWithSetup = new HashMap<>();
 
 
 }

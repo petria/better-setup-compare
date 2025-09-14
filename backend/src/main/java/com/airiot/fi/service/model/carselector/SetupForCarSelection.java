@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class SetupForCarSelection {
 
-    private long id;
+  private long id;
 
-    private String setupIniFileName;
+  private String setupIniFileName;
 
 }

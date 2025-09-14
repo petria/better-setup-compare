@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 public class TrackForCarSelection {
 
-    private long id;
+  private long id;
 
-    private String trackName;
+  private String trackName;
 
-    private String trackFolderName;
+  private String trackFolderName;
 
-    private int iniFileCount;
+  private int iniFileCount;
 
 }

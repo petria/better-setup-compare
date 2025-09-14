@@ -7,13 +7,13 @@ import lombok.ToString;
 @ToString
 public class SetupIniFileScanStats {
 
-    private String scanDir;
+  private String scanDir;
 
-    private String configKeyMapFile;
+  private String configKeyMapFile;
 
-    private int uniqueSetupFiles;
-    private int carDirs;
-    private int trackDirs;
-    private long scanTime;
+  private int uniqueSetupFiles;
+  private int carDirs;
+  private int trackDirs;
+  private long scanTime;
 
 }

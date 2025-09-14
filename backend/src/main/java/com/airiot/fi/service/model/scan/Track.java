@@ -10,13 +10,13 @@ import java.util.Map;
 @NoArgsConstructor
 public class Track {
 
-    private long id;
+  private long id;
 
-    private String trackName;
+  private String trackName;
 
-    private String trackFolderName;
+  private String trackFolderName;
 
-    private Map<String, String> iniFilesMap = new HashMap<>();
+  private Map<String, String> iniFilesMap = new HashMap<>();
 
 
 }

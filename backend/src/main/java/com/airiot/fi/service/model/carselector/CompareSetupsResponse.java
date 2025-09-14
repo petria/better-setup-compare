@@ -10,6 +10,6 @@ import java.util.List;
 @Data
 public class CompareSetupsResponse {
 
-    private List<CompareDifference> differences;
+  private List<CompareDifference> differences;
 
 }

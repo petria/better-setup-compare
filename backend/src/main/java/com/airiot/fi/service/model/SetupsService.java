@@ -1,13 +1,12 @@
 package com.airiot.fi.service.model;
 
+import com.airiot.fi.reader.SetupFilesReader;
 import com.airiot.fi.service.model.carselector.*;
 import com.airiot.fi.service.model.scan.*;
-import com.airiot.fi.reader.SetupFilesReader;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.awt.datatransfer.SystemFlavorMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -22,231 +21,231 @@ import static com.airiot.fi.config.StaticConfig.AC_SETUP_LOCAL_BASE_DIR;
 public class SetupsService {
 
 
-    private final SetupFilesReader reader;
+  private final SetupFilesReader reader;
 
-    private Map<String, String> configKeyMapping;
-    private Map<String, SetupScanResults> resultsMap = new HashMap<>();
+  private Map<String, String> configKeyMapping;
+  private Map<String, SetupScanResults> resultsMap = new HashMap<>();
 
-    private Map<String, Car> setupsMap = new HashMap<>();
+  private Map<String, Car> setupsMap = new HashMap<>();
 
-    private long carIdCounter = 0;
-    private long trackIdCounter = 0;
+  private long carIdCounter = 0;
+  private long trackIdCounter = 0;
 
-    private long iniIdCounter = 0;
-    private Map<Long, SetupIniFile> setupIdMap = new HashMap<>();
+  private long iniIdCounter = 0;
+  private Map<Long, SetupIniFile> setupIdMap = new HashMap<>();
 
   public SetupsService(SetupFilesReader reader) throws IOException {
-        this.reader = reader;
-    }
+    this.reader = reader;
+  }
 
-    @PostConstruct
-    public void doInitialScan() {
-        try {
-            SetupIniFileScanStats stats = scanForSetupIniFiles(AC_CONFIG_KEYS_MAP_FILE, AC_SETUP_LOCAL_BASE_DIR);
-            log.debug("Initial scan done: {}", stats);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+  @PostConstruct
+  public void doInitialScan() {
+    try {
+      SetupIniFileScanStats stats = scanForSetupIniFiles(AC_CONFIG_KEYS_MAP_FILE, AC_SETUP_LOCAL_BASE_DIR);
+      log.debug("Initial scan done: {}", stats);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
+  public synchronized SetupIniFileScanStats scanForSetupIniFiles(String configKeysMapFile, String setupLocalBaseDir) throws IOException {
+
+    SetupIniFileScanStats stats = new SetupIniFileScanStats();
+    stats.setConfigKeyMapFile(configKeysMapFile);
+
+    long start = System.currentTimeMillis();
+
+    this.carIdCounter = 0;
+    this.trackIdCounter = 0;
+    this.iniIdCounter = 0;
+
+    configKeyMapping = reader.readConfigKeysMappingIniFile(AC_CONFIG_KEYS_MAP_FILE);
+
+    String scanDir = setupLocalBaseDir;
+    stats.setScanDir(scanDir);
+
+    log.debug("Scan dir   : {}", scanDir);
+
+    List<File> carDirFiles = reader.scanForFolders(scanDir);
+
+    Set<String> carDirNames = new HashSet<>();
+    Set<String> trackDirNames = new HashSet<>();
+    int uniqueSetupFiles = 0;
+
+    for (File carFile : carDirFiles) {
+      String carFileName = carFile.getName();
+
+      Car carModel = this.setupsMap.get(carFileName);
+      if (carModel == null) {
+        this.carIdCounter++;
+        carModel = new Car();
+        carModel.setId(carIdCounter);
+        carModel.setCarName(carFileName);
+        carModel.setCarFolderName(carFileName);
+        this.setupsMap.put(carFileName, carModel);
+      }
+
+
+      List<File> trackFiles = reader.scanForFolders(carFile.getAbsolutePath());
+      for (File file : trackFiles) {
+        String path = file.getAbsolutePath();
+        String[] split = path.split("/");
+
+        String car = split[split.length - 2];
+        if (car.contains("bmw_z4_gt3")) {
+          int foo = 0;
         }
-    }
+        String track = split[split.length - 1];
+        if (track.equals("generic")) {
+          // skip generic dir
+          continue;
+        }
+        carDirNames.add(car);
+        trackDirNames.add(track);
+        String key = String.format("%s__%s", car, track);
 
+        String[] iniFiles = reader.scanForIniFiles(path);
+        SetupScanResults results
+            = SetupScanResults.builder()
+            .carFolder(car)
+            .trackFolder(track)
+            .iniFilePath(new ArrayList<>())
+            .iniFilesMap(new HashMap<>())
+            .build();
+        carModel.setIniFileCount(iniFiles.length);
 
-    public synchronized SetupIniFileScanStats scanForSetupIniFiles(String configKeysMapFile, String setupLocalBaseDir) throws IOException {
+        for (String iniFile : iniFiles) {
+          uniqueSetupFiles++;
+          Track trackModel = carModel.getTracksWithSetup().get(track);
+          if (trackModel == null) {
+            this.trackIdCounter++;
+            trackModel = new Track();
+            trackModel.setId(this.trackIdCounter);
+            trackModel.setTrackFolderName(track);
+            trackModel.setTrackName(track);
+            carModel.getTracksWithSetup().put(track, trackModel);
+          }
+          String pathToIni = path + "/" + iniFile;
+          trackModel.getIniFilesMap().put(iniFile, pathToIni);
+          results.getIniFilesMap().put(iniFile, pathToIni);
 
-        SetupIniFileScanStats stats = new SetupIniFileScanStats();
-        stats.setConfigKeyMapFile(configKeysMapFile);
+          SetupIniFile setupIniFile = new SetupIniFile();
+          setupIniFile.setSetupFullPath(pathToIni);
+          setupIniFile.setId(uniqueSetupFiles);
+          setupIniFile.setCarFolderName(carModel.getCarFolderName());
+          setupIniFile.setTrackFolderName(trackModel.getTrackFolderName());
 
-        long start = System.currentTimeMillis();
-
-        this.carIdCounter = 0;
-        this.trackIdCounter = 0;
-        this.iniIdCounter = 0;
-
-        configKeyMapping = reader.readConfigKeysMappingIniFile(AC_CONFIG_KEYS_MAP_FILE);
-
-        String scanDir = setupLocalBaseDir;
-        stats.setScanDir(scanDir);
-
-        log.debug("Scan dir   : {}", scanDir);
-
-        List<File> carDirFiles = reader.scanForFolders(scanDir);
-
-        Set<String> carDirNames = new HashSet<>();
-        Set<String> trackDirNames = new HashSet<>();
-        int uniqueSetupFiles = 0;
-
-        for (File carFile : carDirFiles) {
-            String carFileName = carFile.getName();
-
-            Car carModel = this.setupsMap.get(carFileName);
-            if (carModel == null) {
-                this.carIdCounter++;
-                carModel = new Car();
-                carModel.setId(carIdCounter);
-                carModel.setCarName(carFileName);
-                carModel.setCarFolderName(carFileName);
-                this.setupsMap.put(carFileName, carModel);
-            }
-
-
-            List<File> trackFiles = reader.scanForFolders(carFile.getAbsolutePath());
-            for (File file : trackFiles) {
-                String path = file.getAbsolutePath();
-                String[] split = path.split("/");
-
-                String car = split[split.length - 2];
-                if (car.contains("bmw_z4_gt3")) {
-                    int foo = 0;
-                }
-                String track = split[split.length - 1];
-                if (track.equals("generic")) {
-                    // skip generic dir
-                    continue;
-                }
-                carDirNames.add(car);
-                trackDirNames.add(track);
-                String key = String.format("%s__%s", car, track);
-
-                String[] iniFiles = reader.scanForIniFiles(path);
-                SetupScanResults results
-                        = SetupScanResults.builder()
-                        .carFolder(car)
-                        .trackFolder(track)
-                        .iniFilePath(new ArrayList<>())
-                        .iniFilesMap(new HashMap<>())
-                        .build();
-                carModel.setIniFileCount(iniFiles.length);
-
-                for (String iniFile : iniFiles) {
-                    uniqueSetupFiles++;
-                    Track trackModel = carModel.getTracksWithSetup().get(track);
-                    if (trackModel == null) {
-                        this.trackIdCounter++;
-                        trackModel = new Track();
-                        trackModel.setId(this.trackIdCounter);
-                        trackModel.setTrackFolderName(track);
-                        trackModel.setTrackName(track);
-                        carModel.getTracksWithSetup().put(track, trackModel);
-                    }
-                    String pathToIni = path + "/" + iniFile;
-                    trackModel.getIniFilesMap().put(iniFile, pathToIni);
-                    results.getIniFilesMap().put(iniFile, pathToIni);
-
-                  SetupIniFile setupIniFile = new SetupIniFile();
-                  setupIniFile.setSetupFullPath(pathToIni);
-                  setupIniFile.setId(uniqueSetupFiles);
-                  setupIniFile.setCarFolderName(carModel.getCarFolderName());
-                  setupIniFile.setTrackFolderName(trackModel.getTrackFolderName());
-
-                  this.setupIdMap.put(setupIniFile.getId(), setupIniFile);
-
-                }
-
-
-                resultsMap.put(key, results);
-
-            }
+          this.setupIdMap.put(setupIniFile.getId(), setupIniFile);
 
         }
-        long scanTime = System.currentTimeMillis() - start;
 
-        log.debug("Setup INIs : {}", setupIdMap.size());
-        log.debug("Car dirs   : {}", carDirNames.size());
-        log.debug("Track dirs : {}", trackDirNames.size());
-        log.debug("Scan time  : {} ms", scanTime);
 
-        stats.setUniqueSetupFiles(setupIdMap.size());
-        stats.setCarDirs(carDirNames.size());
-        stats.setTrackDirs(trackDirNames.size());
-        stats.setScanTime(scanTime);
+        resultsMap.put(key, results);
 
-        stats.setUniqueSetupFiles(uniqueSetupFiles);
+      }
 
-        return stats;
+    }
+    long scanTime = System.currentTimeMillis() - start;
+
+    log.debug("Setup INIs : {}", setupIdMap.size());
+    log.debug("Car dirs   : {}", carDirNames.size());
+    log.debug("Track dirs : {}", trackDirNames.size());
+    log.debug("Scan time  : {} ms", scanTime);
+
+    stats.setUniqueSetupFiles(setupIdMap.size());
+    stats.setCarDirs(carDirNames.size());
+    stats.setTrackDirs(trackDirNames.size());
+    stats.setScanTime(scanTime);
+
+    stats.setUniqueSetupFiles(uniqueSetupFiles);
+
+    return stats;
+  }
+
+  public Map<String, String> getConfigKeyMapping() {
+    return configKeyMapping;
+  }
+
+  public Map<String, SetupScanResults> getResultsMap() {
+    return resultsMap;
+  }
+
+  public Map<String, Car> getSetupsMap() {
+    return setupsMap;
+  }
+
+  public List<Car> getCarList() {
+    List<Car> carList = new ArrayList<>();
+    for (Car car : this.setupsMap.values()) {
+      if (car.getTracksWithSetup().size() > 0) {
+        carList.add(car);
+      }
+    }
+    carList.sort(Comparator.comparing(Car::getCarName));
+    return carList;
+  }
+
+  public List<CarForSelection> getCarListForSelection() {
+    List<Car> carList1 = getCarList();
+    return carList1.stream().map(this::convertToCarForSelection).collect(Collectors.toList());
+  }
+
+  private CarForSelection convertToCarForSelection(Car car) {
+    CarForSelection forSelection
+        = CarForSelection.builder()
+        .id(car.getId())
+        .carTracksWithSetup(car.getTracksWithSetup().size())
+        .carFolderName(car.getCarFolderName())
+        .carName(car.getCarName())
+        .build();
+    return forSelection;
+  }
+
+
+  public List<TrackForCarSelection> getTrackByFolderName(String carFolderName) {
+    Car car = this.setupsMap.get(carFolderName);
+    List<TrackForCarSelection> list = new ArrayList<>();
+    if (car != null) {
+      Stream<String> sorted = car.getTracksWithSetup().keySet().stream().sorted();
+      for (String trackName : sorted.toList()) {
+        Track track = car.getTracksWithSetup().get(trackName);
+
+        TrackForCarSelection forCarSelection
+            = TrackForCarSelection.builder()
+            .id(track.getId())
+            .trackFolderName(track.getTrackFolderName())
+            .trackName(track.getTrackName())
+            .iniFileCount(track.getIniFilesMap().size())
+            .build();
+        list.add(forCarSelection);
+      }
     }
 
-    public Map<String, String> getConfigKeyMapping() {
-        return configKeyMapping;
-    }
+    return list;
+  }
 
-    public Map<String, SetupScanResults> getResultsMap() {
-        return resultsMap;
-    }
+  public List<SetupForCarSelection> getSetupListForCarAndTrack(String carFolderName, String trackFolderName) {
+    List<SetupForCarSelection> list = new ArrayList<>();
 
-    public Map<String, Car> getSetupsMap() {
-        return setupsMap;
-    }
-
-    public List<Car> getCarList() {
-        List<Car> carList = new ArrayList<>();
-        for (Car car : this.setupsMap.values()) {
-            if (car.getTracksWithSetup().size() > 0) {
-                carList.add(car);
-            }
+    Car car = this.setupsMap.get(carFolderName);
+    if (car != null) {
+      Track track = car.getTracksWithSetup().get(trackFolderName);
+      if (track != null) {
+        Stream<String> sorted = track.getIniFilesMap().keySet().stream().sorted();
+        int id = 0;
+        for (String setupKeyName : sorted.toList()) {
+          SetupForCarSelection forCarSelection
+              = SetupForCarSelection.builder()
+              .id(id++)
+              .setupIniFileName(setupKeyName)
+              .build();
+          list.add(forCarSelection);
         }
-        carList.sort(Comparator.comparing(Car::getCarName));
-        return carList;
+      }
     }
-
-    public List<CarForSelection> getCarListForSelection() {
-        List<Car> carList1 = getCarList();
-        return carList1.stream().map(this::convertToCarForSelection).collect(Collectors.toList());
-    }
-
-    private CarForSelection convertToCarForSelection(Car car) {
-        CarForSelection forSelection
-                = CarForSelection.builder()
-                .id(car.getId())
-                .carTracksWithSetup(car.getTracksWithSetup().size())
-                .carFolderName(car.getCarFolderName())
-                .carName(car.getCarName())
-                .build();
-        return forSelection;
-    }
-
-
-    public List<TrackForCarSelection> getTrackByFolderName(String carFolderName) {
-        Car car = this.setupsMap.get(carFolderName);
-        List<TrackForCarSelection> list = new ArrayList<>();
-        if (car != null) {
-            Stream<String> sorted = car.getTracksWithSetup().keySet().stream().sorted();
-            for (String trackName : sorted.toList()) {
-                Track track = car.getTracksWithSetup().get(trackName);
-
-                TrackForCarSelection forCarSelection
-                        = TrackForCarSelection.builder()
-                        .id(track.getId())
-                        .trackFolderName(track.getTrackFolderName())
-                        .trackName(track.getTrackName())
-                        .iniFileCount(track.getIniFilesMap().size())
-                        .build();
-                list.add(forCarSelection);
-            }
-        }
-
-        return list;
-    }
-
-    public List<SetupForCarSelection> getSetupListForCarAndTrack(String carFolderName, String trackFolderName) {
-        List<SetupForCarSelection> list = new ArrayList<>();
-
-        Car car = this.setupsMap.get(carFolderName);
-        if (car != null) {
-            Track track = car.getTracksWithSetup().get(trackFolderName);
-            if (track != null) {
-                Stream<String> sorted = track.getIniFilesMap().keySet().stream().sorted();
-                int id = 0;
-                for (String setupKeyName : sorted.toList()) {
-                    SetupForCarSelection forCarSelection
-                            = SetupForCarSelection.builder()
-                            .id(id++)
-                            .setupIniFileName(setupKeyName)
-                            .build();
-                    list.add(forCarSelection);
-                }
-            }
-        }
-      return list;
-    }
+    return list;
+  }
 
   public List<String> getSetupById(long setupId) {
     SetupIniFile setupIniFile = this.setupIdMap.get(setupId);
@@ -261,110 +260,109 @@ public class SetupsService {
   }
 
 
+  private void compare() throws IOException {
+    SetupScanResults scanResults = resultsMap.get("ks_porsche_911_gt1__monza");
+    log.debug("Compare    : {}", scanResults);
+    int idx = 0;
+    for (String iniFile : scanResults.getIniFilePath()) {
+      log.debug("ini        : {} = {}", idx, iniFile);
+      idx++;
+    }
+    String iniBase = scanResults.getIniFilePath().get(0);
+    String iniCompare = scanResults.getIniFilePath().get(1);
+    Map<String, String> baseValues = reader.parseValues(reader.readSetupFile(iniBase));
+    Map<String, String> otherValues = reader.parseValues(reader.readSetupFile(iniCompare));
+    SetupIniComparator comparator = new SetupIniComparator(configKeyMapping);
+    comparator.compare(baseValues, otherValues);
 
-    private void compare() throws IOException {
-        SetupScanResults scanResults = resultsMap.get("ks_porsche_911_gt1__monza");
-        log.debug("Compare    : {}", scanResults);
-        int idx = 0;
-        for (String iniFile : scanResults.getIniFilePath()) {
-            log.debug("ini        : {} = {}", idx, iniFile);
-            idx++;
-        }
-        String iniBase = scanResults.getIniFilePath().get(0);
-        String iniCompare = scanResults.getIniFilePath().get(1);
-        Map<String, String> baseValues = reader.parseValues(reader.readSetupFile(iniBase));
-        Map<String, String> otherValues = reader.parseValues(reader.readSetupFile(iniCompare));
+  }
+
+  private Map<String, String> getSetupIniValues(String selected) throws IOException {
+    String[] split = selected.split(" / ");
+    if (split.length != 3) {
+      return new HashMap<>();
+    }
+    String key = String.format("%s__%s", split[0], split[1]);
+
+    SetupScanResults setupScanResults = resultsMap.get(key);
+    String iniBase = setupScanResults.getIniFilesMap().get(split[2]);
+
+    return reader.parseValues(reader.readSetupFile(iniBase));
+  }
+
+  public CompareSetupsResponse compareSetups(List<IniSections> iniList) throws IOException {
+
+    List<CompareDifference> differenceList = new ArrayList<>();
+    Map<String, String> baseValues = getSetupIniValues(iniList.get(0).getSelected());
+
+    List<Map<String, String>> otherValuesList = new ArrayList<>();
+    for (int i = 0; i < iniList.size(); i++) {
+      if (i == 0) {
+        continue; // skip 1st which is base values
+      }
+      Map<String, String> otherValues = getSetupIniValues(iniList.get(i).getSelected());
+      otherValuesList.add(otherValues);
+    }
+
+    if (baseValues != null && !otherValuesList.isEmpty()) {
+
+      List<Map<String, List<String>>> differenceMapList = new ArrayList<>();
+      for (Map<String, String> otherValues : otherValuesList) {
         SetupIniComparator comparator = new SetupIniComparator(configKeyMapping);
-        comparator.compare(baseValues, otherValues);
+        Map<String, List<String>> differenceMap = comparator.compare(baseValues, otherValues);
+        differenceMapList.add(differenceMap);
+      }
 
-    }
 
-    private Map<String, String> getSetupIniValues(String selected) throws IOException {
-        String[] split = selected.split(" / ");
-        if (split.length != 3) {
-            return new HashMap<>();
-        }
-        String key = String.format("%s__%s", split[0], split[1]);
+      Stream<String> sortedKeys = reader.getConfigKeyGroups().keySet().stream().sorted();
+      for (String groupKey : sortedKeys.toList()) {
 
-        SetupScanResults setupScanResults = resultsMap.get(key);
-        String iniBase = setupScanResults.getIniFilesMap().get(split[2]);
+        Set<String> configKeyStrings = reader.getConfigKeyGroups().get(groupKey);
+        for (String configKey : configKeyStrings) {
+          String hasDiff = "";
 
-        return reader.parseValues(reader.readSetupFile(iniBase));
-    }
+          Map<String, List<String>> differenceMap = differenceMapList.get(0);
+          List<String> difference = differenceMap.get(configKey);
 
-    public CompareSetupsResponse compareSetups(List<IniSections> iniList) throws IOException {
+          List<String> list = new ArrayList<>();
+          list.add(groupKey);
+          list.add(configKey);
 
-        List<CompareDifference> differenceList = new ArrayList<>();
-        Map<String, String> baseValues = getSetupIniValues(iniList.get(0).getSelected());
+          if (difference != null) {
+            list.add(difference.get(0));
+            list.add(difference.get(1));
 
-        List<Map<String, String>> otherValuesList = new ArrayList<>();
-        for (int i = 0; i < iniList.size(); i++) {
+            hasDiff += "1";
+
+          } else {
+            hasDiff += "0";
+            list.add("-");
+            list.add("-");
+          }
+
+          for (int i = 0; i < differenceMapList.size(); i++) {
             if (i == 0) {
-                continue; // skip 1st which is base values
+              continue; // SKIP 1st already handled
             }
-            Map<String, String> otherValues = getSetupIniValues(iniList.get(i).getSelected());
-            otherValuesList.add(otherValues);
+            differenceMap = differenceMapList.get(i);
+            difference = differenceMap.get(configKey);
+            if (difference != null) {
+              list.add(difference.get(1));
+              hasDiff += "1";
+            } else {
+              hasDiff += "0";
+              list.add("-");
+            }
+          }
+          if (hasDiff.indexOf("0") == -1) {
+            differenceList.add(CompareDifference.builder().differences(list).build());
+          }
+
         }
-
-        if (baseValues != null && !otherValuesList.isEmpty()) {
-
-            List<Map<String, List<String>>> differenceMapList = new ArrayList<>();
-            for (Map<String, String> otherValues : otherValuesList) {
-                SetupIniComparator comparator = new SetupIniComparator(configKeyMapping);
-                Map<String, List<String>> differenceMap = comparator.compare(baseValues, otherValues);
-                differenceMapList.add(differenceMap);
-            }
-
-
-            Stream<String> sortedKeys = reader.getConfigKeyGroups().keySet().stream().sorted();
-            for (String groupKey : sortedKeys.toList()) {
-
-                Set<String> configKeyStrings = reader.getConfigKeyGroups().get(groupKey);
-                for (String configKey : configKeyStrings) {
-                    String hasDiff = "";
-
-                    Map<String, List<String>> differenceMap = differenceMapList.get(0);
-                    List<String> difference = differenceMap.get(configKey);
-
-                    List<String> list = new ArrayList<>();
-                    list.add(groupKey);
-                    list.add(configKey);
-
-                    if (difference != null) {
-                        list.add(difference.get(0));
-                        list.add(difference.get(1));
-
-                        hasDiff += "1";
-
-                    } else {
-                        hasDiff += "0";
-                        list.add("-");
-                        list.add("-");
-                    }
-
-                    for (int i = 0; i < differenceMapList.size(); i++) {
-                        if (i == 0) {
-                            continue; // SKIP 1st already handled
-                        }
-                        differenceMap = differenceMapList.get(i);
-                        difference = differenceMap.get(configKey);
-                        if (difference != null) {
-                            list.add(difference.get(1));
-                            hasDiff += "1";
-                        } else {
-                            hasDiff += "0";
-                            list.add("-");
-                        }
-                    }
-                    if (hasDiff.indexOf("0") == -1) {
-                        differenceList.add(CompareDifference.builder().differences(list).build());
-                    }
-
-                }
-            }
-        }
-
-        return CompareSetupsResponse.builder().differences(differenceList).build();
+      }
     }
+
+    return CompareSetupsResponse.builder().differences(differenceList).build();
+  }
 
 }

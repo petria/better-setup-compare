@@ -1,4 +1,3 @@
-
 package com.airiot.fi.service.model.diff;
 
 import com.fasterxml.jackson.annotation.*;
@@ -15,29 +14,29 @@ import java.util.Map;
 @Generated("jsonschema2pojo")
 public class Data {
 
-    @JsonProperty("setups")
-    private List<Setup> setups;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+  @JsonProperty("setups")
+  private List<Setup> setups;
+  @JsonIgnore
+  private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-    @JsonProperty("setups")
-    public List<Setup> getSetups() {
-        return setups;
-    }
+  @JsonProperty("setups")
+  public List<Setup> getSetups() {
+    return setups;
+  }
 
-    @JsonProperty("setups")
-    public void setSetups(List<Setup> setups) {
-        this.setups = setups;
-    }
+  @JsonProperty("setups")
+  public void setSetups(List<Setup> setups) {
+    this.setups = setups;
+  }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+  @JsonAnyGetter
+  public Map<String, Object> getAdditionalProperties() {
+    return this.additionalProperties;
+  }
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+  @JsonAnySetter
+  public void setAdditionalProperty(String name, Object value) {
+    this.additionalProperties.put(name, value);
+  }
 
 }

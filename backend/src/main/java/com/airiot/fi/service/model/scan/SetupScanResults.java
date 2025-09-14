@@ -11,10 +11,10 @@ import java.util.Map;
 @Data
 public class SetupScanResults {
 
-    String carFolder;
-    String trackFolder;
+  String carFolder;
+  String trackFolder;
 
-    List<String> iniFilePath;
-    private Map<String, String> iniFilesMap;
+  List<String> iniFilePath;
+  private Map<String, String> iniFilesMap;
 
 }

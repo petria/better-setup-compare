@@ -1,4 +1,3 @@
-
 package com.airiot.fi.service.model.diff;
 
 import com.fasterxml.jackson.annotation.*;
@@ -16,41 +15,41 @@ import java.util.Map;
 @Generated("jsonschema2pojo")
 public class Diff {
 
-    @JsonProperty("category")
-    private String category;
-    @JsonProperty("values")
-    private List<Value> values;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+  @JsonProperty("category")
+  private String category;
+  @JsonProperty("values")
+  private List<Value> values;
+  @JsonIgnore
+  private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-    @JsonProperty("category")
-    public String getCategory() {
-        return category;
-    }
+  @JsonProperty("category")
+  public String getCategory() {
+    return category;
+  }
 
-    @JsonProperty("category")
-    public void setCategory(String category) {
-        this.category = category;
-    }
+  @JsonProperty("category")
+  public void setCategory(String category) {
+    this.category = category;
+  }
 
-    @JsonProperty("values")
-    public List<Value> getValues() {
-        return values;
-    }
+  @JsonProperty("values")
+  public List<Value> getValues() {
+    return values;
+  }
 
-    @JsonProperty("values")
-    public void setValues(List<Value> values) {
-        this.values = values;
-    }
+  @JsonProperty("values")
+  public void setValues(List<Value> values) {
+    this.values = values;
+  }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+  @JsonAnyGetter
+  public Map<String, Object> getAdditionalProperties() {
+    return this.additionalProperties;
+  }
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+  @JsonAnySetter
+  public void setAdditionalProperty(String name, Object value) {
+    this.additionalProperties.put(name, value);
+  }
 
 }

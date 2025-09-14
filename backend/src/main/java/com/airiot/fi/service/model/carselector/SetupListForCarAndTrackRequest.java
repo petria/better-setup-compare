@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SetupListForCarAndTrackRequest {
 
-    private String carFolderName;
+  private String carFolderName;
 
-    private String trackFolderName;
+  private String trackFolderName;
 
 }
