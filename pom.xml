@@ -12,42 +12,17 @@
     <name>better-setup-compare</name>
 
     <properties>
-        <maven.compiler.source>24</maven.compiler.source>
-        <maven.compiler.target>24</maven.compiler.target>
         <maven.compiler.release>24</maven.compiler.release>
-        <java.version>24</java.version>
-
-        <spring-boot.version>3.5.5</spring-boot.version>
-        <spring-ai.version>1.0.0</spring-ai.version>
 
         <node.version>v20.11.0</node.version>
         <npm.version>10.2.4</npm.version>
     </properties>
 
+
     <modules>
         <module>backend</module>
         <module>frontend</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-bom</artifactId>
-                <version>${spring-ai.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
     <build>

@@ -1,11 +1,13 @@
-# Use a slim Java
-FROM openjdk:24
+# Build stage
+FROM maven:3.9-eclipse-temurin-24 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the packaged JAR file into the container
-COPY target/*.jar /app.jar
-
-# Expose the port the backend runs on
+# Runtime stage
+FROM eclipse-temurin:24-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

@@ -1,8 +1,12 @@
-# Use a lightweight Nginx server
+# Build static files
+FROM node:20 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Serve with nginx
 FROM nginx:alpine
-
-# Copy the static build files into the Nginx web server directory
-COPY build /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
+COPY --from=build /app/build /usr/share/nginx/html
+# Optional: custom nginx.conf if you need routing rules
