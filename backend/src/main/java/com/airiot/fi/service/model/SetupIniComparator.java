@@ -1,15 +1,15 @@
 package com.airiot.fi.service.model;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public class SetupIniComparator {
 
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(SetupIniComparator.class);
   private final Map<String, String> configKeyMapping;
 
   public SetupIniComparator(Map<String, String> configKeyMapping) {

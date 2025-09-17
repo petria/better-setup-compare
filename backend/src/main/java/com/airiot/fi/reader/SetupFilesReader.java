@@ -1,6 +1,5 @@
 package com.airiot.fi.reader;
 
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,10 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class SetupFilesReader {
 
-  @Getter
   private Map<String, String> keyToConfigGroup = new HashMap<>();
 
-  @Getter
   private Map<String, Set<String>> configKeyGroups = new HashMap<>();
 
   public List<String> readSetupFile(String fileName) throws IOException {
@@ -75,5 +72,13 @@ public class SetupFilesReader {
     }
 
     return keyToConfigGroup;
+  }
+
+  public Map<String, String> getKeyToConfigGroup() {
+    return this.keyToConfigGroup;
+  }
+
+  public Map<String, Set<String>> getConfigKeyGroups() {
+    return this.configKeyGroups;
   }
 }

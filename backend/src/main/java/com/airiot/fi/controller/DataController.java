@@ -4,7 +4,7 @@ import com.airiot.fi.service.model.SetupsService;
 import com.airiot.fi.service.model.carselector.CarForSelection;
 import com.airiot.fi.service.model.carselector.SetupForCarSelection;
 import com.airiot.fi.service.model.carselector.TrackForCarSelection;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@Slf4j
 public class DataController {
 
 
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(DataController.class);
   private final SetupsService setupsService;
 
   public DataController(SetupsService setupsService) {

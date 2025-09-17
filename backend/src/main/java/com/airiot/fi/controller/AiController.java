@@ -2,7 +2,7 @@ package com.airiot.fi.controller;
 
 import com.airiot.fi.model.api.AiChatRequest;
 import com.airiot.fi.service.ai.AiService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,9 +11,9 @@ import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/api/ai")
-@Slf4j
 public class AiController {
 
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(AiController.class);
   private final AiService aiService;
 
   public AiController(AiService aiService) {

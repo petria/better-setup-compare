@@ -4,7 +4,7 @@ import com.airiot.fi.reader.SetupFilesReader;
 import com.airiot.fi.service.model.carselector.*;
 import com.airiot.fi.service.model.scan.*;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,10 +17,10 @@ import static com.airiot.fi.config.StaticConfig.AC_CONFIG_KEYS_MAP_FILE;
 import static com.airiot.fi.config.StaticConfig.AC_SETUP_LOCAL_BASE_DIR;
 
 @Service
-@Slf4j
 public class SetupsService {
 
 
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(SetupsService.class);
   private final SetupFilesReader reader;
 
   private Map<String, String> configKeyMapping;
