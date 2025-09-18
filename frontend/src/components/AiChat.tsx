@@ -22,7 +22,7 @@ const AiChat = () => {
         const startTime = Date.now();
 
         try {
-            const response = await fetch('/api/ai/stream/chat', {
+            const response = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,6 +31,9 @@ const AiChat = () => {
             });
 
             if (!response.body) return;
+
+            const endTime = Date.now();
+            const duration = endTime - startTime;
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
@@ -44,8 +47,6 @@ const AiChat = () => {
                 const chunk = decoder.decode(value, {stream: true});
                 setChatHistory(prev => prev + chunk);
             }
-            const endTime = Date.now();
-            const duration = endTime - startTime;
             setChatHistory(prev => prev + `\n[AI response took: ${duration} ms]\n`);
         } catch (error) {
             console.error('Error sending chat message:', error);

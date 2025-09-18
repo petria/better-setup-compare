@@ -16,8 +16,10 @@ public class UserController {
   @GetMapping("/user")
   public Map<String, Object> getUser(@AuthenticationPrincipal UserDetails userDetails) {
     Map<String, Object> userMap = new HashMap<>();
-    userMap.put("username", userDetails.getUsername());
-    userMap.put("roles", userDetails.getAuthorities());
+//    if (userDetails != null) {
+      userMap.put("username", userDetails.getUsername());
+      userMap.put("roles", userDetails.getAuthorities());
+//    }
     return userMap;
   }
 }
