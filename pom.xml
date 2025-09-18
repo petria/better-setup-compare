@@ -11,34 +11,8 @@
 
     <name>better-setup-compare</name>
 
-    <properties>
-        <maven.compiler.release>24</maven.compiler.release>
-
-        <node.version>v20.11.0</node.version>
-        <npm.version>10.2.4</npm.version>
-    </properties>
-
-
     <modules>
         <module>backend</module>
-        <module>frontend</module>
     </modules>
-
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <!-- Configure Maven Compiler Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
-                    <configuration>
-                        <release>${maven.compiler.release}</release>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 
 </project>
