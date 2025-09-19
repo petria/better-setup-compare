@@ -140,6 +140,7 @@
                         <configuration>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
+                            <installDirectory>${frontend.dir}</installDirectory>
                         </configuration>
                     </execution>
 
@@ -152,6 +153,7 @@
                         <configuration>
                             <arguments>install</arguments>
                             <workingDirectory>${frontend.dir}</workingDirectory>
+                            <installDirectory>${frontend.dir}</installDirectory>
                         </configuration>
                     </execution>
 
@@ -164,6 +166,7 @@
                         <configuration>
                             <arguments>run build</arguments>
                             <workingDirectory>${frontend.dir}</workingDirectory>
+                            <installDirectory>${frontend.dir}</installDirectory>
                         </configuration>
                     </execution>
                 </executions>
