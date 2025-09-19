@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {Button, Card, Col, Container, Form, Row, Spinner} from 'react-bootstrap';
 
 const AiChat = () => {
     const [prompt, setPrompt] = useState('');
@@ -60,33 +61,51 @@ const AiChat = () => {
     };
 
     return (
-        <div>
-            <textarea
-                ref={textareaRef}
-                rows={20}
-                cols={80}
-                readOnly
-                value={chatHistory}
-                placeholder="AI response..."
-            />
-            <div>
-                <input
-                    type="text"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Enter your prompt"
-                    disabled={isBusy}
-                />
-                <button onClick={handleSend} disabled={isBusy}>Send</button>
-                <button onClick={handleClearHistory} disabled={isBusy}>Clear History</button>
-                {isBusy && <div>Waiting for response...</div>}
-            </div>
-        </div>
+        <Container>
+            <Row>
+                <Col>
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>AI Chat</Card.Title>
+                            <Form.Control
+                                as="textarea"
+                                ref={textareaRef}
+                                rows={20}
+                                readOnly
+                                value={chatHistory}
+                                placeholder="AI response..."
+                                className="mb-3"
+                            />
+                            <Form>
+                                <Row>
+                                    <Col>
+                                        <Form.Control
+                                            type="text"
+                                            value={prompt}
+                                            onChange={(e) => setPrompt(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                            placeholder="Enter your prompt"
+                                            disabled={isBusy}
+                                        />
+                                    </Col>
+                                    <Col xs="auto">
+                                        <Button onClick={handleSend} disabled={isBusy} variant="primary">
+                                            {isBusy ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Send'}
+                                        </Button>
+                                    </Col>
+                                    <Col xs="auto">
+                                        <Button onClick={handleClearHistory} disabled={isBusy} variant="secondary">
+                                            Clear History
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
     );
 };
-
-
-
 
 export default AiChat;
