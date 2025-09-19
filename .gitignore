@@ -31,4 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# node things
 /frontend/node/
+/backend/node/
+
+#
+/ACsetups/
