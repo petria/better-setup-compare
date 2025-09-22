@@ -1,0 +1,30 @@
+name: Deploy to VM
+
+on:
+  workflow_run:
+    workflows: ["CI - Build and Push Docker Image"] # Must match the name of your CI workflow
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd ~/better-setup-compare
+            # Create a .env file with the new image tag
+            echo "IMAGE_TAG=${{ github.event.workflow_run.head_sha }}" > .env
+            # Log in to the GitHub Container Registry
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.CR_PAT }}
+            # Pull the new image
+            docker compose pull
+            # Restart the service
+            docker compose up -d
