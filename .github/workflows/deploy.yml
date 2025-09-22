@@ -23,7 +23,7 @@ jobs:
             # Create a .env file with the new image tag
             echo "IMAGE_TAG=${{ github.event.workflow_run.head_sha }}" > .env
             # Log in to the GitHub Container Registry
-            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.CR_PAT }}
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.VM_GH_TOKEN }}
             # Pull the new image
             docker compose pull
             # Restart the service
