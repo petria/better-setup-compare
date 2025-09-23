@@ -23,7 +23,7 @@
         <frontend.dir>../frontend</frontend.dir>
 
         <spring-boot.version>3.5.5</spring-boot.version>
-        <spring-ai.version>1.0.0</spring-ai.version>
+        <spring-ai.version>1.0.2</spring-ai.version>
 
         <maven.compiler.source>24</maven.compiler.source>
         <maven.compiler.target>24</maven.compiler.target>
@@ -76,6 +76,12 @@
             <artifactId>spring-ai-starter-model-ollama</artifactId>
         </dependency>
 
+<!--
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>

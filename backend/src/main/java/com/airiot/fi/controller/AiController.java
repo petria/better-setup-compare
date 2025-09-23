@@ -20,10 +20,18 @@ public class AiController {
     this.aiService = aiService;
   }
 
-  @PostMapping("/chat")
+  @PostMapping("/chatStream")
   public Flux<String> aiChatStream(@RequestBody AiChatRequest request) {
-    log.debug("Received AiChatRequest: {}", request);
+    log.debug("Received aiChatStream: {}", request);
     return aiService.aiChatStream(request.getPrompt());
+  }
+
+  @PostMapping("/chat")
+  public String aiChat(@RequestBody AiChatRequest request) {
+    log.debug("Received aiChat: {}", request);
+    String response = aiService.getAiChatResponse(request.getPrompt());
+//    log.debug("response: {}",response);
+    return response;
   }
 
 }

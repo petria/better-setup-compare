@@ -31,24 +31,15 @@ const AiChat = () => {
                 body: JSON.stringify({prompt}),
             });
 
-            if (!response.body) return;
+            const responseData = await response.text();
 
             const endTime = Date.now();
             const duration = endTime - startTime;
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
+            setChatHistory(prev => prev + `[AI response took: ${duration} ms]\n`);
 
-            setChatHistory(prev => prev + 'AI: ');
-            while (true) {
-                const {done, value} = await reader.read();
-                if (done) {
-                    break;
-                }
-                const chunk = decoder.decode(value, {stream: true});
-                setChatHistory(prev => prev + chunk);
-            }
-            setChatHistory(prev => prev + `\n[AI response took: ${duration} ms]\n`);
+            setChatHistory(prev => prev + `AI: ${responseData}\n`);
+
         } catch (error) {
             console.error('Error sending chat message:', error);
         } finally {
@@ -76,14 +67,19 @@ const AiChat = () => {
                                 placeholder="AI response..."
                                 className="mb-3"
                             />
-                            <Form>
+                            <Form onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
                                 <Row>
                                     <Col>
                                         <Form.Control
                                             type="text"
                                             value={prompt}
                                             onChange={(e) => setPrompt(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    handleSend();
+                                                }
+                                            }}
                                             placeholder="Enter your prompt"
                                             disabled={isBusy}
                                         />

@@ -17,8 +17,8 @@ public class UserController {
   public Map<String, Object> getUser(@AuthenticationPrincipal UserDetails userDetails) {
     Map<String, Object> userMap = new HashMap<>();
 //    if (userDetails != null) {
-      userMap.put("username", userDetails.getUsername());
-      userMap.put("roles", userDetails.getAuthorities());
+    userMap.put("username", userDetails.getUsername());
+    userMap.put("roles", userDetails.getAuthorities());
 //    }
     return userMap;
   }
