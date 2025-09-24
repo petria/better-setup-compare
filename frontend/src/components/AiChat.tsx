@@ -13,6 +13,23 @@ const AiChat = () => {
         }
     }, [chatHistory]);
 
+    const fetchInitialMessage = async () => {
+        setIsBusy(true);
+        try {
+            const response = await fetch('/api/ai/getChatInitMessage');
+            const initialMessage = await response.text();
+            setChatHistory('AI: ' + initialMessage + '\n');
+        } catch (error) {
+            console.error('Error fetching initial message:', error);
+        } finally {
+            setIsBusy(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchInitialMessage();
+    }, []);
+
     const handleSend = async () => {
         if (!prompt) return;
 
@@ -48,7 +65,7 @@ const AiChat = () => {
     };
 
     const handleClearHistory = () => {
-        setChatHistory('');
+        fetchInitialMessage();
     };
 
     return (
