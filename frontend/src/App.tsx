@@ -33,7 +33,7 @@ const AppContent: React.FC = () => {
                         path="/"
                         element={
                             <PrivateRoute>
-                                <Hello/>
+                                <AiChat/>
                             </PrivateRoute>
                         }
                     />
