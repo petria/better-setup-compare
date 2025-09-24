@@ -1,4 +1,4 @@
-package com.airiot.fi.service.model;
+package com.airiot.fi.service;
 
 import org.slf4j.Logger;
 

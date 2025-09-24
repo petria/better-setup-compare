@@ -1,4 +1,4 @@
-package com.airiot.fi.service.model;
+package com.airiot.fi.service;
 
 import com.airiot.fi.reader.SetupFilesReader;
 import com.airiot.fi.service.model.carselector.*;
@@ -34,6 +34,8 @@ public class SetupsService {
   private long iniIdCounter = 0;
   private Map<Long, SetupIniFile> setupIdMap = new HashMap<>();
 
+  private SetupIniFileScanStats stats  = new SetupIniFileScanStats();
+
   public SetupsService(SetupFilesReader reader) throws IOException {
     this.reader = reader;
   }
@@ -41,13 +43,16 @@ public class SetupsService {
   @PostConstruct
   public void doInitialScan() {
     try {
-      SetupIniFileScanStats stats = scanForSetupIniFiles(AC_CONFIG_KEYS_MAP_FILE, AC_SETUP_LOCAL_BASE_DIR);
+      this.stats = scanForSetupIniFiles(AC_CONFIG_KEYS_MAP_FILE, AC_SETUP_LOCAL_BASE_DIR);
       log.debug("Initial scan done: {}", stats);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
+  public SetupIniFileScanStats getStats() {
+    return stats;
+  }
 
   public synchronized SetupIniFileScanStats scanForSetupIniFiles(String configKeysMapFile, String setupLocalBaseDir) throws IOException {
 
@@ -159,6 +164,7 @@ public class SetupsService {
     stats.setScanTime(scanTime);
 
     stats.setUniqueSetupFiles(uniqueSetupFiles);
+    stats.setScanDone(true);
 
     return stats;
   }

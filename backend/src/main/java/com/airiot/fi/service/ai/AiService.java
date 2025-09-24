@@ -1,6 +1,7 @@
 package com.airiot.fi.service.ai;
 
-import com.airiot.fi.service.model.SetupsService;
+import com.airiot.fi.service.SetupsService;
+import com.airiot.fi.service.model.scan.SetupIniFileScanStats;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -39,5 +40,14 @@ public class AiService {
     return reply;
   }
 
-
+  public String getChatInitMessage() {
+    SetupIniFileScanStats stats = setupsService.getStats();
+    if (stats.isScanDone()) {
+      StringBuilder sb = new StringBuilder();
+      sb.append(stats);
+      return sb.toString();
+    } else {
+      return "[STATS NOT AVAILABLE]";
+    }
+  }
 }

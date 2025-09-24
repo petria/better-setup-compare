@@ -2,6 +2,8 @@ package com.airiot.fi.service.model.scan;
 
 public class SetupIniFileScanStats {
 
+  private boolean scanDone = false;
+
   private String scanDir;
 
   private String configKeyMapFile;
@@ -12,6 +14,14 @@ public class SetupIniFileScanStats {
   private long scanTime;
 
   public SetupIniFileScanStats() {
+  }
+
+  public boolean isScanDone() {
+    return scanDone;
+  }
+
+  public void setScanDone(boolean scanDone) {
+    this.scanDone = scanDone;
   }
 
   public String getScanDir() {

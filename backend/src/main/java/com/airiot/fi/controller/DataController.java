@@ -1,6 +1,6 @@
 package com.airiot.fi.controller;
 
-import com.airiot.fi.service.model.SetupsService;
+import com.airiot.fi.service.SetupsService;
 import com.airiot.fi.service.model.carselector.CarForSelection;
 import com.airiot.fi.service.model.carselector.SetupForCarSelection;
 import com.airiot.fi.service.model.carselector.TrackForCarSelection;
@@ -45,5 +45,6 @@ public class DataController {
   public List<String> getSetupById(@PathVariable long setupId) {
     return setupsService.getSetupById(setupId);
   }
+
 
 }

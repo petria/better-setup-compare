@@ -1,6 +1,6 @@
 package com.airiot.fi.service.ai;
 
-import com.airiot.fi.service.model.SetupsService;
+import com.airiot.fi.service.SetupsService;
 import org.slf4j.Logger;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;

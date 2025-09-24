@@ -3,10 +3,7 @@ package com.airiot.fi.controller;
 import com.airiot.fi.model.api.AiChatRequest;
 import com.airiot.fi.service.ai.AiService;
 import org.slf4j.Logger;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 @RestController
@@ -32,6 +29,11 @@ public class AiController {
     String response = aiService.getAiChatResponse(request.getPrompt());
 //    log.debug("response: {}",response);
     return response;
+  }
+
+  @GetMapping("/getChatInitMessage")
+  public String getChatInitMessage() {
+    return  aiService.getChatInitMessage();
   }
 
 }
