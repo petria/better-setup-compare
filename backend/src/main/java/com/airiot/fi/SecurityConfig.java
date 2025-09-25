@@ -23,8 +23,8 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/index.html", "/favicon.ico", "/manifest.json", "/logo192.png", "/logo512.png", "/*.js", "/*.css", "/*.map", "/static/**", "/login", "/api/**").permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers("/", "/index.html", "/favicon.ico", "/manifest.json", "/logo192.png", "/logo512.png", "/*.js", "/*.css", "/*.map", "/static/**", "/login", "/api/**").permitAll()
+            .anyRequest().authenticated()
         )
         .formLogin(formLogin -> formLogin
             .loginProcessingUrl("/login")

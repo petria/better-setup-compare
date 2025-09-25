@@ -1,9 +1,9 @@
 package com.airiot.fi.controller;
 
-import com.airiot.fi.service.SetupsService;
 import com.airiot.fi.model.ini.carselector.CarForSelection;
 import com.airiot.fi.model.ini.carselector.SetupForCarSelection;
 import com.airiot.fi.model.ini.carselector.TrackForCarSelection;
+import com.airiot.fi.service.SetupsService;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

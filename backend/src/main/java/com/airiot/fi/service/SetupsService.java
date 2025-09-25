@@ -1,8 +1,8 @@
 package com.airiot.fi.service;
 
-import com.airiot.fi.reader.SetupFilesReader;
 import com.airiot.fi.model.ini.carselector.*;
 import com.airiot.fi.model.ini.scan.*;
+import com.airiot.fi.reader.SetupFilesReader;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class SetupsService {
   private long iniIdCounter = 0;
   private Map<Long, SetupIniFile> setupIdMap = new HashMap<>();
 
-  private SetupIniFileScanStats stats  = new SetupIniFileScanStats();
+  private SetupIniFileScanStats stats = new SetupIniFileScanStats();
 
   public SetupsService(SetupFilesReader reader) throws IOException {
     this.reader = reader;

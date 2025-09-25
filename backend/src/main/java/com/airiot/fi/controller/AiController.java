@@ -33,7 +33,7 @@ public class AiController {
 
   @GetMapping("/getChatInitMessage")
   public String getChatInitMessage() {
-    return  aiService.getChatInitMessage();
+    return aiService.getChatInitMessage();
   }
 
 }
