@@ -3,15 +3,17 @@ import {CarForSelection, SetupForCarSelection, TrackForCarSelection} from '../ty
 import {Button, Form} from 'react-bootstrap';
 import SetupComparator from './SetupComparator';
 import {getCars, getSetups, getTracks} from '../services/api';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../store';
+import {setSelectedCar, setSelectedSetup, setSelectedTrack} from '../store/setupSlice';
 
 const CompareSetups: React.FC = () => {
+    const dispatch = useDispatch();
+    const {selectedCar, selectedTrack, selectedSetup} = useSelector((state: RootState) => state.setup);
+
     const [cars, setCars] = useState<CarForSelection[]>([]);
     const [tracks, setTracks] = useState<TrackForCarSelection[]>([]);
     const [setups, setSetups] = useState<SetupForCarSelection[]>([]);
-
-    const [selectedCar, setSelectedCar] = useState<CarForSelection | null>(null);
-    const [selectedTrack, setSelectedTrack] = useState<TrackForCarSelection | null>(null);
-    const [selectedSetup, setSelectedSetup] = useState<SetupForCarSelection | null>(null);
 
     const [carFilter, setCarFilter] = useState('');
     const [trackFilter, setTrackFilter] = useState('');
@@ -21,18 +23,27 @@ const CompareSetups: React.FC = () => {
         getCars().then(setCars);
     }, []);
 
-    const handleCarChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const carFolderName = event.target.value;
-        const car = cars.find(c => c.carFolderName === carFolderName) || null;
-        setSelectedCar(car);
-        setSelectedTrack(null);
-        setSelectedSetup(null);
-        if (car) {
-            getTracks(car.carFolderName).then(setTracks);
+    useEffect(() => {
+        if (selectedCar) {
+            getTracks(selectedCar.carFolderName).then(setTracks);
         } else {
             setTracks([]);
         }
         setSetups([]);
+    }, [selectedCar]);
+
+    useEffect(() => {
+        if (selectedCar && selectedTrack) {
+            getSetups(selectedCar.carFolderName, selectedTrack.trackFolderName).then(setSetups);
+        } else {
+            setSetups([]);
+        }
+    }, [selectedCar, selectedTrack]);
+
+    const handleCarChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const carFolderName = event.target.value;
+        const car = cars.find(c => c.carFolderName === carFolderName) || null;
+        dispatch(setSelectedCar(car));
         setTrackFilter('');
         setSetupFilter('');
     };
@@ -40,20 +51,14 @@ const CompareSetups: React.FC = () => {
     const handleTrackChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const trackName = event.target.value;
         const track = tracks.find(t => t.trackFolderName === trackName) || null;
-        setSelectedTrack(track);
-        setSelectedSetup(null);
-        if (selectedCar && track) {
-            getSetups(selectedCar.carFolderName, track.trackFolderName).then(setSetups);
-        } else {
-            setSetups([]);
-        }
+        dispatch(setSelectedTrack(track));
         setSetupFilter('');
     };
 
     const handleSetupChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const setupName = event.target.value;
         const setup = setups.find(s => s.setupIniFileName === setupName) || null;
-        setSelectedSetup(setup);
+        dispatch(setSelectedSetup(setup));
     };
 
     const filteredCars = cars.filter(car => car.carFolderName.toLowerCase().includes(carFilter.toLowerCase()));
