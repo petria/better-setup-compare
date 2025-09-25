@@ -1,4 +1,4 @@
-package com.airiot.fi.service.model.scan;
+package com.airiot.fi.model.ini.scan;
 
 
 import java.util.List;

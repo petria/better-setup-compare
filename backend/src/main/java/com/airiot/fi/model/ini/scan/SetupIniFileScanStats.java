@@ -1,4 +1,4 @@
-package com.airiot.fi.service.model.scan;
+package com.airiot.fi.model.ini.scan;
 
 public class SetupIniFileScanStats {
 

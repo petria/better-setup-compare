@@ -1,7 +1,7 @@
 package com.airiot.fi.service.ai;
 
 import com.airiot.fi.service.SetupsService;
-import com.airiot.fi.service.model.scan.SetupIniFileScanStats;
+import com.airiot.fi.model.ini.scan.SetupIniFileScanStats;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

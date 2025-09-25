@@ -1,4 +1,4 @@
-package com.airiot.fi.service.model.diff;
+package com.airiot.fi.model.ini.diff;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -9,37 +9,24 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "category",
-    "values"
+    "setups"
 })
 @Generated("jsonschema2pojo")
-public class Diff {
+public class Data {
 
-  @JsonProperty("category")
-  private String category;
-  @JsonProperty("values")
-  private List<Value> values;
+  @JsonProperty("setups")
+  private List<Setup> setups;
   @JsonIgnore
   private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-  @JsonProperty("category")
-  public String getCategory() {
-    return category;
+  @JsonProperty("setups")
+  public List<Setup> getSetups() {
+    return setups;
   }
 
-  @JsonProperty("category")
-  public void setCategory(String category) {
-    this.category = category;
-  }
-
-  @JsonProperty("values")
-  public List<Value> getValues() {
-    return values;
-  }
-
-  @JsonProperty("values")
-  public void setValues(List<Value> values) {
-    this.values = values;
+  @JsonProperty("setups")
+  public void setSetups(List<Setup> setups) {
+    this.setups = setups;
   }
 
   @JsonAnyGetter

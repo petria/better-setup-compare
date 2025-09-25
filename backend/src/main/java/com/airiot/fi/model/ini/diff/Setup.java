@@ -1,28 +1,52 @@
-package com.airiot.fi.service.model.diff;
+package com.airiot.fi.model.ini.diff;
 
 import com.fasterxml.jackson.annotation.*;
 
 import javax.annotation.Generated;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+    "id",
+    "iniFile",
     "name",
-    "value",
-    "difference"
+    "diffs"
 })
 @Generated("jsonschema2pojo")
-public class Value {
+public class Setup {
 
+  @JsonProperty("id")
+  private Integer id;
+  @JsonProperty("iniFile")
+  private String iniFile;
   @JsonProperty("name")
   private String name;
-  @JsonProperty("value")
-  private String value;
-  @JsonProperty("difference")
-  private String difference;
+  @JsonProperty("diffs")
+  private List<Diff> diffs;
   @JsonIgnore
   private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+
+  @JsonProperty("id")
+  public Integer getId() {
+    return id;
+  }
+
+  @JsonProperty("id")
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
+  @JsonProperty("iniFile")
+  public String getIniFile() {
+    return iniFile;
+  }
+
+  @JsonProperty("iniFile")
+  public void setIniFile(String iniFile) {
+    this.iniFile = iniFile;
+  }
 
   @JsonProperty("name")
   public String getName() {
@@ -34,24 +58,14 @@ public class Value {
     this.name = name;
   }
 
-  @JsonProperty("value")
-  public String getValue() {
-    return value;
+  @JsonProperty("diffs")
+  public List<Diff> getDiffs() {
+    return diffs;
   }
 
-  @JsonProperty("value")
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @JsonProperty("difference")
-  public String getDifference() {
-    return difference;
-  }
-
-  @JsonProperty("difference")
-  public void setDifference(String difference) {
-    this.difference = difference;
+  @JsonProperty("diffs")
+  public void setDiffs(List<Diff> diffs) {
+    this.diffs = diffs;
   }
 
   @JsonAnyGetter

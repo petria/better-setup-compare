@@ -1,8 +1,8 @@
 package com.airiot.fi.service;
 
 import com.airiot.fi.reader.SetupFilesReader;
-import com.airiot.fi.service.model.carselector.*;
-import com.airiot.fi.service.model.scan.*;
+import com.airiot.fi.model.ini.carselector.*;
+import com.airiot.fi.model.ini.scan.*;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;

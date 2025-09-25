@@ -1,4 +1,4 @@
-package com.airiot.fi.service.model.carselector;
+package com.airiot.fi.model.ini.carselector;
 
 public class CarForSelection {
 

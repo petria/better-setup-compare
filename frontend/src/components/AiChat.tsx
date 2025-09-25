@@ -18,7 +18,7 @@ const AiChat = () => {
         try {
             const response = await fetch('/api/ai/getChatInitMessage');
             const initialMessage = await response.text();
-            setChatHistory('AI: ' + initialMessage + '\n');
+            setChatHistory('[INIT: ' + initialMessage + ']\n');
         } catch (error) {
             console.error('Error fetching initial message:', error);
         } finally {

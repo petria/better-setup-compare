@@ -4,12 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,7 +23,6 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(authorize -> authorize
-//            .requestMatchers("/login",).permitAll()
                 .requestMatchers("/", "/index.html", "/favicon.ico", "/manifest.json", "/logo192.png", "/logo512.png", "/*.js", "/*.css", "/*.map", "/static/**", "/login", "/api/**").permitAll()
                 .anyRequest().authenticated()
         )
@@ -43,26 +38,6 @@ public class SecurityConfig {
         )
         .logout(logout -> logout.permitAll());
     return http.build();
-  }
-
-  @Bean
-  public UserDetailsService userDetailsService() {
-    UserDetails root = User.builder()
-        .username("root")
-        .password(passwordEncoder().encode("root"))
-        .roles("ADMIN", "USER", "GUEST")
-        .build();
-    UserDetails user = User.builder()
-        .username("user")
-        .password(passwordEncoder().encode("user"))
-        .roles("USER", "GUEST")
-        .build();
-    UserDetails guest = User.builder()
-        .username("guest")
-        .password(passwordEncoder().encode("guest"))
-        .roles("GUEST")
-        .build();
-    return new InMemoryUserDetailsManager(root, user, guest);
   }
 
   @Bean
