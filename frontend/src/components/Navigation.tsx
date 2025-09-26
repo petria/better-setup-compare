@@ -23,7 +23,7 @@ const Navigation: React.FC = () => {
                     {auth.isAuthenticated &&
                         <Nav className="me-auto">
                             <Nav.Link as={Link} to="/compare-setupDtos">Compare setups</Nav.Link>
-                            {isAdmin && <Nav.Link href="/admin">Admin</Nav.Link>}
+                            {isAdmin && <Nav.Link as={Link} to="/admin">Admin</Nav.Link>}
                         </Nav>
                     }
                     {auth.isAuthenticated &&

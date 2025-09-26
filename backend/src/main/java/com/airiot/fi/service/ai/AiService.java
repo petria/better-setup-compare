@@ -3,6 +3,10 @@ package com.airiot.fi.service.ai;
 import com.airiot.fi.model.ini.scan.SetupIniFileScanStats;
 import com.airiot.fi.service.SetupsService;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -40,6 +44,33 @@ public class AiService {
     return reply;
   }
 
+  /**
+   * Sends the given prompt to the Ollama server specified by hostUrl
+   * and returns the model's text output.
+   *
+   * @param hostUrl  Base URL of the Ollama host, e.g. "http://localhost:11434"
+   * @param promptText Prompt text to send
+   * @return Model output text
+   */
+  public String aiChat(String hostUrl, String promptText) {
+    // Create a fresh API client for the specified host
+
+    // Choose a model name that exists on that host
+    String modelName = "llama3";   // or dynamically choose/receive as parameter
+
+
+    // Create a chat model bound to this host and model
+    OllamaChatModel chatModel = OllamaChatModel.builder().ollamaApi(OllamaApi.builder().baseUrl(hostUrl).build()).build();
+
+    // Build the prompt and call the model
+    Prompt prompt = new Prompt(promptText);
+    ChatResponse response = chatModel.call(prompt);
+    String result = response.toString();
+    // Return plain text output
+    return result;
+  }
+
+
   public String getChatInitMessage() {
     SetupIniFileScanStats stats = setupsService.getStats();
     if (stats.isScanDone()) {
@@ -50,4 +81,5 @@ public class AiService {
       return "[STATS NOT AVAILABLE]";
     }
   }
+
 }

@@ -26,7 +26,8 @@ public class AiController {
   @PostMapping("/chat")
   public String aiChat(@RequestBody AiChatRequest request) {
     log.debug("Received aiChat: {}", request);
-    String response = aiService.getAiChatResponse(request.getPrompt());
+//    String response = aiService.getAiChatResponse(request.getPrompt());
+    String response = aiService.aiChat("http://localhost:11434", request.getPrompt());
 //    log.debug("response: {}",response);
     return response;
   }
