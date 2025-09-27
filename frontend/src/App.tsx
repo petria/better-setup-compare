@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import LoginPage from './components/LoginPage';
 import PrivateRoute from './components/PrivateRoute';
-import {AuthProvider} from './hooks/useAuth';
+import {AuthProvider, useAuth} from './hooks/useAuth';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {Container} from 'react-bootstrap';
 import Navigation from './components/Navigation';
@@ -22,6 +22,15 @@ const App: React.FC = () => {
 }
 
 const AppContent: React.FC = () => {
+    const auth = useAuth();
+    useEffect(() => {
+        auth.checkAuth();
+    }, []);
+
+    if (auth.loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <>
             <Navigation/>

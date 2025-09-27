@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react';
 
 interface User {
     username: string;
@@ -9,6 +9,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
     loading: boolean;
+    checkAuth: () => Promise<void>;
     login: (username: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -20,25 +21,22 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const response = await fetch('/api/user');
-                if (response.ok) {
-                    const userData = await response.json();
-                    setUser(userData);
-                    setIsAuthenticated(true);
-                }
-            } catch (error) {
-                console.error('Error checking auth status:', error);
-            } finally {
-                setLoading(false);
+    const checkAuth = useCallback(async () => {
+        try {
+            const response = await fetch('/api/user');
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+                setIsAuthenticated(true);
             }
-        };
-        checkAuth();
+        } catch (error) {
+            console.error('Error checking auth status:', error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    const login = async (username: string, password: string) => {
+    const login = useCallback(async (username: string, password: string) => {
         const response = await fetch('/login', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -53,16 +51,16 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
         } else {
             throw new Error('Login failed');
         }
-    };
+    }, []);
 
-    const logout = async () => {
+    const logout = useCallback(async () => {
         await fetch('/logout', {method: 'POST'});
         setIsAuthenticated(false);
         setUser(null);
-    };
+    }, []);
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, user, loading, login, logout}}>
+        <AuthContext.Provider value={{isAuthenticated, user, loading, checkAuth, login, logout}}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useAuth} from '../hooks/useAuth';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {Alert, Button, Container, Form} from 'react-bootstrap';
 
 const LoginPage: React.FC = () => {
@@ -9,13 +9,20 @@ const LoginPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const auth = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
+
+    useEffect(() => {
+        if (auth.isAuthenticated) {
+            navigate(from, {replace: true});
+        }
+    }, [auth.isAuthenticated, navigate, from]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError(null);
         try {
             await auth.login(username, password);
-            navigate('/');
         } catch (error) {
             if (error instanceof TypeError && error.message === 'Failed to fetch') {
                 setError('Backend not reached');
