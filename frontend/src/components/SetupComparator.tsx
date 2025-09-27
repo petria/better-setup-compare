@@ -1,39 +1,22 @@
-import React, {useState} from 'react';
-import {CarForSelection, SetupForCarSelection, TrackForCarSelection} from '../types';
+import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import SelectedSetup from './SelectedSetup';
 import {Button} from 'react-bootstrap';
+import {RootState} from '../store';
+import {addSetupToComparison, removeSetupFromComparison} from '../store/setupSlice';
 
-interface SetupComparatorProps {
-    selectedCar: CarForSelection | null;
-    selectedTrack: TrackForCarSelection | null;
-    selectedSetup: SetupForCarSelection | null;
-}
-
-interface ComparisonItem {
-    id: number;
-    car: CarForSelection;
-    track: TrackForCarSelection;
-    setup: SetupForCarSelection;
-}
-
-const SetupComparator: React.FC<SetupComparatorProps> = ({selectedCar, selectedTrack, selectedSetup}) => {
-    const [comparisonList, setComparisonList] = useState<ComparisonItem[]>([]);
-    const [nextId, setNextId] = useState(0);
+const SetupComparator: React.FC = () => {
+    const dispatch = useDispatch();
+    const {selectedCar, selectedTrack, selectedSetup, comparisonList} = useSelector((state: RootState) => state.setup);
 
     const handleAddSetup = () => {
         if (selectedCar && selectedTrack && selectedSetup) {
-            setComparisonList([...comparisonList, {
-                id: nextId,
-                car: selectedCar,
-                track: selectedTrack,
-                setup: selectedSetup
-            }]);
-            setNextId(nextId + 1);
+            dispatch(addSetupToComparison({car: selectedCar, track: selectedTrack, setup: selectedSetup}));
         }
     };
 
     const handleRemoveSetup = (id: number) => {
-        setComparisonList(comparisonList.filter(item => item.id !== id));
+        dispatch(removeSetupFromComparison(id));
     };
 
     return (

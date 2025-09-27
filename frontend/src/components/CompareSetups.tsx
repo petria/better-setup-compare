@@ -136,11 +136,7 @@ const CompareSetups: React.FC = () => {
                 </Form.Group>
             </Form>
 
-            <SetupComparator
-                selectedCar={selectedCar}
-                selectedTrack={selectedTrack}
-                selectedSetup={selectedSetup}
-            />
+            <SetupComparator />
         </div>
     );
 };

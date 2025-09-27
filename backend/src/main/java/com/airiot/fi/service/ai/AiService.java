@@ -7,8 +7,11 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
+import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Service
 public class AiService {
@@ -54,19 +57,23 @@ public class AiService {
    */
   public String aiChat(String hostUrl, String promptText) {
     // Create a fresh API client for the specified host
-
-    // Choose a model name that exists on that host
     String modelName = "llama3";   // or dynamically choose/receive as parameter
 
+    OllamaApi ollamaApi = OllamaApi.builder().baseUrl(hostUrl).build();
+    ModelManagementOptions modelManagementOptions = ModelManagementOptions.builder()
+        .additionalModels(List.of(modelName))
+        .build();
 
-    // Create a chat model bound to this host and model
-    OllamaChatModel chatModel = OllamaChatModel.builder().ollamaApi(OllamaApi.builder().baseUrl(hostUrl).build()).build();
+    OllamaChatModel chatModel = OllamaChatModel.builder()
+        .ollamaApi(ollamaApi)
+        .modelManagementOptions(modelManagementOptions)
+        .build();
 
-    // Build the prompt and call the model
-    Prompt prompt = new Prompt(promptText);
-    ChatResponse response = chatModel.call(prompt);
-    String result = response.toString();
-    // Return plain text output
+    ChatClient client = ChatClient.create(chatModel);
+//    ChatResponse chatResponse = client.prompt().tools(new SetupQueryTool(setupsService)).system(SYSTEM_PROMPT).user(promptText).call().chatResponse();
+
+    String result = client.prompt().tools(new SetupQueryTool(setupsService)).system(SYSTEM_PROMPT).user(promptText).call().content();
+
     return result;
   }
 

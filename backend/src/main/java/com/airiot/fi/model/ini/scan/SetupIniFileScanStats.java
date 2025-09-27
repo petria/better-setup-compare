@@ -111,6 +111,6 @@ public class SetupIniFileScanStats {
   }
 
   public String toString() {
-    return "SetupIniFileScanStats(scanDir=" + this.getScanDir() + ", configKeyMapFile=" + this.getConfigKeyMapFile() + ", uniqueSetupFiles=" + this.getUniqueSetupFiles() + ", carDirs=" + this.getCarDirs() + ", trackDirs=" + this.getTrackDirs() + ", scanTime=" + this.getScanTime() + ")";
+    return "SetupIniFileScanStats(scanDir=" + this.getScanDir() + ", configKeyMapFile=" + this.getConfigKeyMapFile() + ", uniqueSetupFiles=" + this.getUniqueSetupFiles() + ", carDirs=" + this.getCarDirs() + ", trackDirs=" + this.getTrackDirs() + ", scanTime=" + this.getScanTime() + "ms )";
   }
 }
