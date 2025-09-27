@@ -25,7 +25,7 @@ const AppContent: React.FC = () => {
     const auth = useAuth();
     useEffect(() => {
         auth.checkAuth();
-    }, []);
+    }, [auth]);
 
     if (auth.loading) {
         return <div>Loading...</div>;
