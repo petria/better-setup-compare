@@ -54,15 +54,9 @@ const AppContent: React.FC = () => {
                         }
                     />
                     <Route
-                        path="/compare-setupDtos"
+                        path="/compare"
                         element={<PrivateRoute>
                             <CompareSetups/>
-                        </PrivateRoute>}
-                    />
-                    <Route
-                        path="/ai-chat"
-                        element={<PrivateRoute>
-                            <AiChat/>
                         </PrivateRoute>}
                     />
                 </Routes>

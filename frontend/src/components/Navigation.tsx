@@ -16,13 +16,13 @@ const Navigation: React.FC = () => {
     return (
         <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
-                <Navbar.Brand as={Link} to="/">Application</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/">Home</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
 
                     {auth.isAuthenticated &&
                         <Nav className="me-auto">
-                            <Nav.Link as={Link} to="/compare-setupDtos">Compare setups</Nav.Link>
+                            <Nav.Link as={Link} to="/compare">Compare setups</Nav.Link>
                             {isAdmin && <Nav.Link as={Link} to="/admin">Admin</Nav.Link>}
                         </Nav>
                     }
@@ -30,9 +30,6 @@ const Navigation: React.FC = () => {
                         <Nav>
                             <NavDropdown title={auth.user?.username} id="basic-nav-dropdown">
                                 <NavDropdown.Item href="#action/3.1">Your profile</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">Your repositories</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Your projects</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.4">Your stars</NavDropdown.Item>
                                 <NavDropdown.Divider/>
                                 <NavDropdown.Item onClick={handleLogout}>Sign out</NavDropdown.Item>
                             </NavDropdown>
