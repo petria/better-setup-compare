@@ -1,29 +1,20 @@
 package com.airiot.fi.service.ai;
 
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.ollama.OllamaChatModel;
+import com.airiot.fi.model.ai.OllamaServerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class AiSpringConfig {
 
 
   @Bean
-  public ChatClient ollamaChatClient(OllamaChatModel chatModel) {
-    ChatMemory chatMemory
-        = MessageWindowChatMemory.builder()
-        .maxMessages(1000)
-        .build();
-    ChatClient.Builder builder = ChatClient.builder(chatModel);
-    ChatClient client =
-        builder.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
-
-            .build();
-    return client;
+  public ConfiguredOllamaServers configuredOllamaServers(ServerProperties serverProperties) {
+    List<OllamaServerConfig> ollamaServerConfigs = serverProperties.parseServerConfig();
+    ConfiguredOllamaServers configuredOllamaServers = new ConfiguredOllamaServers(ollamaServerConfigs);
+    return configuredOllamaServers;
   }
 
 }

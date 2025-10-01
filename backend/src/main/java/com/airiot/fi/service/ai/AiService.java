@@ -1,8 +1,11 @@
 package com.airiot.fi.service.ai;
 
+import com.airiot.fi.model.ai.OllamaServerConfig;
 import com.airiot.fi.model.ini.scan.SetupIniFileScanStats;
 import com.airiot.fi.service.SetupsService;
-import org.springframework.ai.chat.client.ChatClient;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -16,7 +19,6 @@ import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +27,11 @@ import java.util.List;
 public class AiService {
 
   private static final String SYSTEM_PROMPT = "You are helpful Assetto Corsa Sim Racing game expert that can analyze game car setup and give characteristic how setup effects car behaviour. When given multiple saved setup ini files you can analyze the differences between setups and  what is their difference in car driving.";
+  private static final Logger log = LoggerFactory.getLogger(AiService.class);
 
   private final SetupsService setupsService;
 
-  private final ChatClient chatClient;
-
-  private final ServerProperties serverProperties;
+  private final ConfiguredOllamaServers configuredOllamaServers;
 
   private final ChatMemory chatMemory = MessageWindowChatMemory.builder()
       .maxMessages(1000)
@@ -38,21 +39,34 @@ public class AiService {
 
   private static final String CHAT_CONVERSATION_ID = "default";
 
-
-  public AiService(SetupsService setupsService, ChatClient chatClient, ServerProperties serverProperties) {
+  public AiService(SetupsService setupsService, ConfiguredOllamaServers configuredOllamaServers) {
     this.setupsService = setupsService;
-    this.chatClient = chatClient;
-    this.serverProperties = serverProperties;
+    this.configuredOllamaServers = configuredOllamaServers;
   }
 
-  public Flux<String> aiChatStream(String prompt) {
-    return chatClient.prompt()
-        .tools(new SetupQueryTool(setupsService))
-        .user(prompt)
-        .system(SYSTEM_PROMPT)
-        .stream()
-        .content();
+
+  @PostConstruct
+  public void initService() {
+
+    for (OllamaServerConfig serverConfig : configuredOllamaServers.ollamaServerConfigs()) {
+      OllamaApi ollamaApi = OllamaApi.builder().baseUrl(serverConfig.getServerUrl()).build();
+      try {
+        OllamaApi.ListModelResponse response = ollamaApi.listModels();
+        serverConfig.getAvailableModelNames().clear();
+        response.models().forEach(ollamaModel -> {
+          serverConfig.getAvailableModelNames().add(ollamaModel.name());
+        });
+        serverConfig.setStatus("OK: " + System.currentTimeMillis());
+      } catch (Exception e) {
+        String error = e.toString();
+        log.error("Error in init service: {}", error);
+        serverConfig.setStatus("ERROR: " + error);
+      }
+
+    }
+
   }
+
 
   /**
    * Sends the given prompt to the Ollama server specified by hostUrl
@@ -63,6 +77,7 @@ public class AiService {
    * @return Model output text
    */
   public String aiChat(String hostUrl, String promptText) {
+
     OllamaApi ollamaApi = OllamaApi.builder().baseUrl(hostUrl).build();
 
     OllamaChatModel chatModel = OllamaChatModel.builder()
@@ -108,6 +123,10 @@ public class AiService {
     } else {
       return "[STATS NOT AVAILABLE]";
     }
+  }
+
+  public List<OllamaServerConfig> getOllamaServerConfigs() {
+    return this.configuredOllamaServers.ollamaServerConfigs();
   }
 
 }

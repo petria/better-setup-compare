@@ -22,12 +22,12 @@ const App: React.FC = () => {
 }
 
 const AppContent: React.FC = () => {
-    const auth = useAuth();
+    const { checkAuth, loading } = useAuth();
     useEffect(() => {
-        auth.checkAuth();
-    }, [auth]);
+        checkAuth();
+    }, [checkAuth]);
 
-    if (auth.loading) {
+    if (loading) {
         return <div>Loading...</div>;
     }
 
