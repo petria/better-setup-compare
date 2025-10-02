@@ -24,7 +24,7 @@ public class AiController {
     log.debug("Received aiChat: {}", request);
 //    String response = aiService.getAiChatResponse(request.getPrompt());
 //    String response = aiService.aiChat("http://localhost:11434", request.getPrompt());
-    String response = aiService.aiChat("http://192.168.0.111:11434", request.getPrompt());
+    String response = aiService.aiChat(request.getServerUrl(), request.getPrompt());
 //    log.debug("response: {}",response);
     return response;
   }

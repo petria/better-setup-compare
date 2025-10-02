@@ -1,4 +1,4 @@
-import {CarForSelection, SetupForCarSelection, TrackForCarSelection} from '../types';
+import {CarForSelection, OllamaServerConfig, SetupForCarSelection, TrackForCarSelection} from '../types';
 
 export const getHello = async (): Promise<string> => {
     const response = await fetch('/api/hello');
@@ -18,5 +18,10 @@ export const getTracks = async (carFolderName: string): Promise<TrackForCarSelec
 
 export const getSetups = async (carFolderName: string, trackFolderName: string): Promise<SetupForCarSelection[]> => {
     const response = await fetch(`/api/cars/${carFolderName}/tracks/${trackFolderName}/setups`);
+    return response.json();
+};
+
+export const getOllamaServerConfigs = async (): Promise<OllamaServerConfig[]> => {
+    const response = await fetch('/api/ai/getOllamaServerConfigs');
     return response.json();
 };

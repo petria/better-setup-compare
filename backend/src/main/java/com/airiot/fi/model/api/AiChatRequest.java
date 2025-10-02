@@ -3,6 +3,7 @@ package com.airiot.fi.model.api;
 public class AiChatRequest {
 
   private String prompt;
+  private String serverUrl; // New field
 
   public AiChatRequest() {
   }
@@ -15,6 +16,16 @@ public class AiChatRequest {
     this.prompt = prompt;
   }
 
+  // New getter for serverUrl
+  public String getServerUrl() {
+    return this.serverUrl;
+  }
+
+  // New setter for serverUrl
+  public void setServerUrl(String serverUrl) {
+    this.serverUrl = serverUrl;
+  }
+
   public boolean equals(final Object o) {
     if (o == this) return true;
     if (!(o instanceof AiChatRequest)) return false;
@@ -23,6 +34,9 @@ public class AiChatRequest {
     final Object this$prompt = this.getPrompt();
     final Object other$prompt = other.getPrompt();
     if (this$prompt == null ? other$prompt != null : !this$prompt.equals(other$prompt)) return false;
+    final Object this$serverUrl = this.getServerUrl(); // Include serverUrl in equals
+    final Object other$serverUrl = other.getServerUrl(); // Include serverUrl in equals
+    if (this$serverUrl == null ? other$serverUrl != null : !this$serverUrl.equals(other$serverUrl)) return false;
     return true;
   }
 
@@ -35,10 +49,12 @@ public class AiChatRequest {
     int result = 1;
     final Object $prompt = this.getPrompt();
     result = result * PRIME + ($prompt == null ? 43 : $prompt.hashCode());
+    final Object $serverUrl = this.getServerUrl(); // Include serverUrl in hashCode
+    result = result * PRIME + ($serverUrl == null ? 43 : $serverUrl.hashCode());
     return result;
   }
 
   public String toString() {
-    return "AiChatRequest(prompt=" + this.getPrompt() + ")";
+    return "AiChatRequest(prompt=" + this.getPrompt() + ", serverUrl=" + this.getServerUrl() + ")"; // Include serverUrl in toString
   }
 }

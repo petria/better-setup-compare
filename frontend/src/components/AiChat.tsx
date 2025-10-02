@@ -1,10 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Card, Col, Container, Form, Row, Spinner} from 'react-bootstrap';
+import {OllamaServerConfig} from '../types';
+import {getOllamaServerConfigs} from '../services/api';
 
 const AiChat = () => {
     const [prompt, setPrompt] = useState('');
     const [chatHistory, setChatHistory] = useState('');
     const [isBusy, setIsBusy] = useState(false);
+    const [ollamaServers, setOllamaServers] = useState<OllamaServerConfig[]>([]);
+    const [selectedServer, setSelectedServer] = useState<string>('');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
@@ -26,8 +30,21 @@ const AiChat = () => {
         }
     };
 
+    const fetchOllamaServers = async () => {
+        try {
+            const servers = await getOllamaServerConfigs();
+            setOllamaServers(servers);
+            if (servers.length > 0) {
+                setSelectedServer(servers[0].serverUrl);
+            }
+        } catch (error) {
+            console.error('Error fetching Ollama servers:', error);
+        }
+    };
+
     useEffect(() => {
         fetchInitialMessage();
+        fetchOllamaServers();
     }, []);
 
     const handleSend = async () => {
@@ -45,7 +62,7 @@ const AiChat = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({prompt}),
+                body: JSON.stringify({prompt, serverUrl: selectedServer}),
             });
 
             const responseData = await response.text();
@@ -54,7 +71,6 @@ const AiChat = () => {
             const duration = endTime - startTime;
 
             setChatHistory(prev => prev + `[AI response took: ${duration} ms]\n`);
-
             setChatHistory(prev => prev + `AI: ${responseData}\n`);
 
         } catch (error) {
@@ -75,6 +91,24 @@ const AiChat = () => {
                     <Card>
                         <Card.Body>
                             <Card.Title>AI Chat</Card.Title>
+                            <Row className="mb-3">
+                                <Col>
+                                    <Form.Group controlId="ollamaServerSelect">
+                                        <Form.Label>Ollama Server</Form.Label>
+                                        <Form.Select
+                                            value={selectedServer}
+                                            onChange={(e) => setSelectedServer(e.target.value)}
+                                            disabled={isBusy}
+                                        >
+                                            {ollamaServers.map((server) => (
+                                                <option key={server.id} value={server.serverUrl}>
+                                                    {server.serverName}
+                                                </option>
+                                            ))}
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
                             <Form.Control
                                 as="textarea"
                                 ref={textareaRef}

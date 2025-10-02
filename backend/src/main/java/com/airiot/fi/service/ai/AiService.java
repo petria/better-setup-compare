@@ -98,7 +98,7 @@ public class AiService {
             messages,
             OllamaOptions.builder()
                 .toolCallbacks(toolCallbacks)
-                .model("qwen3-coder:30b")
+                .model("qwen3:30b-a3b")
                 .temperature(0.4)
                 .build()
         ));
