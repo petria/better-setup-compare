@@ -108,6 +108,8 @@ const AiChat = () => {
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
+                                <Col>
+                                </Col>
                             </Row>
                             <Form.Control
                                 as="textarea"

@@ -1,5 +1,7 @@
 package com.airiot.fi.model.api;
 
+import java.util.Objects;
+
 public class AiChatRequest {
 
   private String prompt;
@@ -33,10 +35,10 @@ public class AiChatRequest {
     if (!other.canEqual((Object) this)) return false;
     final Object this$prompt = this.getPrompt();
     final Object other$prompt = other.getPrompt();
-    if (this$prompt == null ? other$prompt != null : !this$prompt.equals(other$prompt)) return false;
+    if (!Objects.equals(this$prompt, other$prompt)) return false;
     final Object this$serverUrl = this.getServerUrl(); // Include serverUrl in equals
     final Object other$serverUrl = other.getServerUrl(); // Include serverUrl in equals
-    if (this$serverUrl == null ? other$serverUrl != null : !this$serverUrl.equals(other$serverUrl)) return false;
+    if (!Objects.equals(this$serverUrl, other$serverUrl)) return false;
     return true;
   }
 
