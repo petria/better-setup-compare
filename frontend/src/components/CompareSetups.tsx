@@ -107,7 +107,7 @@ const CompareSetups: React.FC = () => {
                         <option>Select a track</option>
                         {filteredTracks.map(track => (
                             <option key={track.trackFolderName}
-                                    value={track.trackFolderName}>{track.trackFolderName}</option>
+                                    value={track.trackFolderName}>{track.trackFolderName} [{track.iniFileCount}]</option>
                         ))}
                     </Form.Select>
                 </Form.Group>

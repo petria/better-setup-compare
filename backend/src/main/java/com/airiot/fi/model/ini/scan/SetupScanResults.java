@@ -9,14 +9,14 @@ public class SetupScanResults {
   String carFolder;
   String trackFolder;
 
-  List<String> iniFilePath;
   private Map<String, String> iniFilesMap;
+  private Map<Long, SetupIniFile> setupIdToIniFileMap;
 
-  SetupScanResults(String carFolder, String trackFolder, List<String> iniFilePath, Map<String, String> iniFilesMap) {
+  SetupScanResults(String carFolder, String trackFolder, Map<String, String> iniFilesMap, Map<Long, SetupIniFile> setupIdToIniFileMap) {
     this.carFolder = carFolder;
     this.trackFolder = trackFolder;
-    this.iniFilePath = iniFilePath;
     this.iniFilesMap = iniFilesMap;
+    this.setupIdToIniFileMap = setupIdToIniFileMap;
   }
 
   public static SetupScanResultsBuilder builder() {
@@ -31,12 +31,12 @@ public class SetupScanResults {
     return this.trackFolder;
   }
 
-  public List<String> getIniFilePath() {
-    return this.iniFilePath;
-  }
-
   public Map<String, String> getIniFilesMap() {
     return this.iniFilesMap;
+  }
+
+  public Map<Long, SetupIniFile> getSetupIdToIniFileMap() {
+    return setupIdToIniFileMap;
   }
 
   public void setCarFolder(String carFolder) {
@@ -47,57 +47,16 @@ public class SetupScanResults {
     this.trackFolder = trackFolder;
   }
 
-  public void setIniFilePath(List<String> iniFilePath) {
-    this.iniFilePath = iniFilePath;
-  }
-
   public void setIniFilesMap(Map<String, String> iniFilesMap) {
     this.iniFilesMap = iniFilesMap;
   }
 
-  public boolean equals(final Object o) {
-    if (o == this) return true;
-    if (!(o instanceof SetupScanResults)) return false;
-    final SetupScanResults other = (SetupScanResults) o;
-    if (!other.canEqual((Object) this)) return false;
-    final Object this$carFolder = this.getCarFolder();
-    final Object other$carFolder = other.getCarFolder();
-    if (this$carFolder == null ? other$carFolder != null : !this$carFolder.equals(other$carFolder)) return false;
-    final Object this$trackFolder = this.getTrackFolder();
-    final Object other$trackFolder = other.getTrackFolder();
-    if (this$trackFolder == null ? other$trackFolder != null : !this$trackFolder.equals(other$trackFolder))
-      return false;
-    final Object this$iniFilePath = this.getIniFilePath();
-    final Object other$iniFilePath = other.getIniFilePath();
-    if (this$iniFilePath == null ? other$iniFilePath != null : !this$iniFilePath.equals(other$iniFilePath))
-      return false;
-    final Object this$iniFilesMap = this.getIniFilesMap();
-    final Object other$iniFilesMap = other.getIniFilesMap();
-    if (this$iniFilesMap == null ? other$iniFilesMap != null : !this$iniFilesMap.equals(other$iniFilesMap))
-      return false;
-    return true;
-  }
-
-  protected boolean canEqual(final Object other) {
-    return other instanceof SetupScanResults;
-  }
-
-  public int hashCode() {
-    final int PRIME = 59;
-    int result = 1;
-    final Object $carFolder = this.getCarFolder();
-    result = result * PRIME + ($carFolder == null ? 43 : $carFolder.hashCode());
-    final Object $trackFolder = this.getTrackFolder();
-    result = result * PRIME + ($trackFolder == null ? 43 : $trackFolder.hashCode());
-    final Object $iniFilePath = this.getIniFilePath();
-    result = result * PRIME + ($iniFilePath == null ? 43 : $iniFilePath.hashCode());
-    final Object $iniFilesMap = this.getIniFilesMap();
-    result = result * PRIME + ($iniFilesMap == null ? 43 : $iniFilesMap.hashCode());
-    return result;
+  public void setSetupIdToIniFileMap(Map<Long, SetupIniFile> setupIdToIniFileMap) {
+    this.setupIdToIniFileMap = setupIdToIniFileMap;
   }
 
   public String toString() {
-    return "SetupScanResults(carFolder=" + this.getCarFolder() + ", trackFolder=" + this.getTrackFolder() + ", iniFilePath=" + this.getIniFilePath() + ", iniFilesMap=" + this.getIniFilesMap() + ")";
+    return "SetupScanResults(carFolder=" + this.getCarFolder() + ", trackFolder=" + this.getTrackFolder() + ", iniFilesMap=" + this.getIniFilesMap() + ")";
   }
 
   public static class SetupScanResultsBuilder {
@@ -105,6 +64,7 @@ public class SetupScanResults {
     private String trackFolder;
     private List<String> iniFilePath;
     private Map<String, String> iniFilesMap;
+    private Map<Long, SetupIniFile> setupIdToIniFileMap;
 
     SetupScanResultsBuilder() {
     }
@@ -129,8 +89,14 @@ public class SetupScanResults {
       return this;
     }
 
+    public SetupScanResultsBuilder setupIdToIniFileMap(Map<Long, SetupIniFile> setupIdToIniFileMap) {
+      this.setupIdToIniFileMap = setupIdToIniFileMap;
+      return this;
+    }
+
+
     public SetupScanResults build() {
-      return new SetupScanResults(this.carFolder, this.trackFolder, this.iniFilePath, this.iniFilesMap);
+      return new SetupScanResults(this.carFolder, this.trackFolder, this.iniFilesMap, this.setupIdToIniFileMap);
     }
 
     public String toString() {

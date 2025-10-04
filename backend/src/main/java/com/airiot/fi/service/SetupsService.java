@@ -111,12 +111,13 @@ public class SetupsService {
         String key = String.format("%s__%s", car, track);
 
         String[] iniFiles = reader.scanForIniFiles(path);
-        SetupScanResults results
+
+        SetupScanResults setupScanResults
             = SetupScanResults.builder()
             .carFolder(car)
             .trackFolder(track)
-            .iniFilePath(new ArrayList<>())
             .iniFilesMap(new HashMap<>())
+            .setupIdToIniFileMap(new HashMap<>())
             .build();
         carModel.setIniFileCount(iniFiles.length);
 
@@ -133,20 +134,25 @@ public class SetupsService {
           }
           String pathToIni = path + "/" + iniFile;
           trackModel.getIniFilesMap().put(iniFile, pathToIni);
-          results.getIniFilesMap().put(iniFile, pathToIni);
+
+          setupScanResults.getIniFilesMap().put(iniFile, pathToIni);
+
 
           SetupIniFile setupIniFile = new SetupIniFile();
           setupIniFile.setSetupFullPath(pathToIni);
           setupIniFile.setId(uniqueSetupFiles);
           setupIniFile.setCarFolderName(carModel.getCarFolderName());
           setupIniFile.setTrackFolderName(trackModel.getTrackFolderName());
+          setupIniFile.setSetupIniFileName(iniFile);
+
+          setupScanResults.getSetupIdToIniFileMap().put(setupIniFile.getId(), setupIniFile);
 
           this.setupIdMap.put(setupIniFile.getId(), setupIniFile);
 
         }
 
 
-        resultsMap.put(key, results);
+        resultsMap.put(key, setupScanResults);
 
       }
 
@@ -234,6 +240,23 @@ public class SetupsService {
   public List<SetupForCarSelection> getSetupListForCarAndTrack(String carFolderName, String trackFolderName) {
     List<SetupForCarSelection> list = new ArrayList<>();
 
+    String key = String.format("%s__%s", carFolderName, trackFolderName);
+
+    SetupScanResults setupScanResults = this.resultsMap.get(key);
+    if  (setupScanResults != null) {
+      Stream<Long> sorted = setupScanResults.getSetupIdToIniFileMap().keySet().stream().sorted();
+      for (Long setupId : sorted.toList()) {
+        SetupIniFile setupIniFile = setupScanResults.getSetupIdToIniFileMap().get(setupId);
+        SetupForCarSelection forCarSelection
+            = SetupForCarSelection.builder()
+            .id(setupIniFile.getId())
+            .setupIniFileName(setupIniFile.getSetupIniFileName())
+            .build();
+        list.add(forCarSelection);
+      }
+    }
+
+/*
     Car car = this.setupsMap.get(carFolderName);
     if (car != null) {
       Track track = car.getTracksWithSetup().get(trackFolderName);
@@ -249,7 +272,7 @@ public class SetupsService {
           list.add(forCarSelection);
         }
       }
-    }
+    }*/
     return list;
   }
 
@@ -265,23 +288,6 @@ public class SetupsService {
     return new ArrayList<>();
   }
 
-
-  private void compare() throws IOException {
-    SetupScanResults scanResults = resultsMap.get("ks_porsche_911_gt1__monza");
-    log.debug("Compare    : {}", scanResults);
-    int idx = 0;
-    for (String iniFile : scanResults.getIniFilePath()) {
-      log.debug("ini        : {} = {}", idx, iniFile);
-      idx++;
-    }
-    String iniBase = scanResults.getIniFilePath().get(0);
-    String iniCompare = scanResults.getIniFilePath().get(1);
-    Map<String, String> baseValues = reader.parseValues(reader.readSetupFile(iniBase));
-    Map<String, String> otherValues = reader.parseValues(reader.readSetupFile(iniCompare));
-    SetupIniComparator comparator = new SetupIniComparator(configKeyMapping);
-    comparator.compare(baseValues, otherValues);
-
-  }
 
   private Map<String, String> getSetupIniValues(String selected) throws IOException {
     String[] split = selected.split(" / ");

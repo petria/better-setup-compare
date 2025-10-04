@@ -16,6 +16,7 @@ const SelectedSetup: React.FC<SelectedSetupProps> = ({car, track, setup, onRemov
                 <Card.Title>{car.carFolderName}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">{track.trackFolderName}</Card.Subtitle>
                 <Card.Text>
+                    <strong>Id:</strong> {setup.id}<br/>
                     <strong>Setup:</strong> {setup.setupIniFileName}
                 </Card.Text>
                 <Button variant="danger" onClick={onRemove}>Remove</Button>
