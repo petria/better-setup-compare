@@ -112,6 +112,18 @@ public class AiService {
     return result;
   }
 
+  public String handleCommand(String command) {
+    String[] parts = command.split(" ", 2);
+    String commandName = parts[0];
+
+    switch (commandName) {
+      case "/help":
+        return "Available commands: \n/help - Shows this help message";
+      default:
+        return "Unknown command: " + commandName;
+    }
+  }
+
 
   public String getChatInitMessage() {
     SetupIniFileScanStats stats = setupsService.getStats();

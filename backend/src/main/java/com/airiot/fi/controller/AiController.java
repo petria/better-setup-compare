@@ -2,6 +2,7 @@ package com.airiot.fi.controller;
 
 import com.airiot.fi.model.ai.OllamaServerConfig;
 import com.airiot.fi.model.api.AiChatRequest;
+import com.airiot.fi.model.api.AiCommandRequest;
 import com.airiot.fi.service.ai.AiService;
 import com.airiot.fi.service.ai.AiServiceDyn;
 import org.slf4j.Logger;
@@ -28,6 +29,12 @@ public class AiController {
     //String response = aiService.aiChat(request.getServerUrl(), request.getPrompt());
     String response = aiServiceDyn.ask(request.getServerUrl(),"qwen3:30b-a3b" ,request.getPrompt());
     return response;
+  }
+
+  @PostMapping("/command")
+  public String aiCommand(@RequestBody AiCommandRequest request) {
+    log.debug("Received aiCommand: {}", request);
+    return aiService.handleCommand(request.getCommand());
   }
 
   @GetMapping("/getChatInitMessage")

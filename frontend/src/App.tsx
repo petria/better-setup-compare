@@ -10,6 +10,7 @@ import AdminPage from './components/AdminPage';
 import AdminRoute from './components/AdminRoute';
 import CompareSetups from './components/CompareSetups';
 import AiChat from './components/AiChat';
+import ImportSetups from "./components/ImportSetups";
 
 const App: React.FC = () => {
     return (
@@ -22,7 +23,7 @@ const App: React.FC = () => {
 }
 
 const AppContent: React.FC = () => {
-    const { checkAuth, loading } = useAuth();
+    const {checkAuth, loading} = useAuth();
     useEffect(() => {
         checkAuth();
     }, [checkAuth]);
@@ -46,18 +47,26 @@ const AppContent: React.FC = () => {
                         }
                     />
                     <Route
+                        path="/compare"
+                        element={
+                        <PrivateRoute>
+                            <CompareSetups/>
+                        </PrivateRoute>}
+                    />
+                    <Route
+                        path="/import"
+                        element={
+                        <PrivateRoute>
+                            <ImportSetups/>
+                        </PrivateRoute>}
+                    />
+                    <Route
                         path="/admin"
                         element={
                             <AdminRoute>
                                 <AdminPage/>
                             </AdminRoute>
                         }
-                    />
-                    <Route
-                        path="/compare"
-                        element={<PrivateRoute>
-                            <CompareSetups/>
-                        </PrivateRoute>}
                     />
                 </Routes>
             </Container>

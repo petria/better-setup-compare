@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Card, Col, Container, Form, Row, Spinner} from 'react-bootstrap';
 import {OllamaServerConfig} from '../types';
-import {getOllamaServerConfigs} from '../services/api';
+import {getOllamaServerConfigs, getChatInitMessage, sendChatCommand, sendChatMessage} from '../services/api';
 
 const AiChat = () => {
     const [prompt, setPrompt] = useState('');
@@ -20,8 +20,7 @@ const AiChat = () => {
     const fetchInitialMessage = async () => {
         setIsBusy(true);
         try {
-            const response = await fetch('/api/ai/getChatInitMessage');
-            const initialMessage = await response.text();
+            const initialMessage = await getChatInitMessage();
             setChatHistory('[INIT: ' + initialMessage + ']\n');
         } catch (error) {
             console.error('Error fetching initial message:', error);
@@ -56,27 +55,36 @@ const AiChat = () => {
 
         const startTime = Date.now();
 
-        try {
-            const response = await fetch('/api/ai/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({prompt, serverUrl: selectedServer}),
-            });
+        if (prompt.startsWith("/")) {
+            try {
+                const responseData = await sendChatCommand(prompt);
 
-            const responseData = await response.text();
+                const endTime = Date.now();
+                const duration = endTime - startTime;
 
-            const endTime = Date.now();
-            const duration = endTime - startTime;
+                setChatHistory(prev => prev + `[COMMAND response took: ${duration} ms]\n`);
+                setChatHistory(prev => prev + `SYSTEM: ${responseData}\n`);
 
-            setChatHistory(prev => prev + `[AI response took: ${duration} ms]\n`);
-            setChatHistory(prev => prev + `AI: ${responseData}\n`);
+            } catch (error) {
+                console.error('Error sending command:', error);
+            } finally {
+                setIsBusy(false);
+            }
+        } else {
+            try {
+                const responseData = await sendChatMessage(prompt, selectedServer);
 
-        } catch (error) {
-            console.error('Error sending chat message:', error);
-        } finally {
-            setIsBusy(false);
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+
+                setChatHistory(prev => prev + `[AI response took: ${duration} ms]\n`);
+                setChatHistory(prev => prev + `AI: ${responseData}\n`);
+
+            } catch (error) {
+                console.error('Error sending chat message:', error);
+            } finally {
+                setIsBusy(false);
+            }
         }
     };
 
