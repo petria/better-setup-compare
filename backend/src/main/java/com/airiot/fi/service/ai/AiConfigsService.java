@@ -11,18 +11,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.airiot.fi.service.ai.cmds.Commands.IMPORT_SETUP;
+
 @Service
 public class AiConfigsService {
 
   private static final Logger log = LoggerFactory.getLogger(AiConfigsService.class);
 
-  private final SetupsService setupsService;
-
   private final ConfiguredOllamaServers configuredOllamaServers;
 
-  public AiConfigsService(SetupsService setupsService, ConfiguredOllamaServers configuredOllamaServers) {
-    this.setupsService = setupsService;
+  private final SetupsService setupsService;
+
+  public AiConfigsService(ConfiguredOllamaServers configuredOllamaServers, SetupsService setupsService) {
     this.configuredOllamaServers = configuredOllamaServers;
+    this.setupsService = setupsService;
   }
 
 
@@ -51,10 +53,20 @@ public class AiConfigsService {
   public String handleCommand(String command) {
     String[] parts = command.split(" ", 2);
     String commandName = parts[0];
+    String commandArgs = null;
+    if (parts.length == 2) {
+      commandArgs = parts[1];
+    }
 
     switch (commandName) {
       case "/help":
         return "Available commands: \n/help - Shows this help message";
+      case "/import":
+        if (commandArgs == null) {
+          return "Usage: /import <url>\n";
+        }
+        return IMPORT_SETUP.handle(commandArgs);
+
       default:
         return "Unknown command: " + commandName;
     }
