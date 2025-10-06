@@ -6,21 +6,9 @@ import com.airiot.fi.service.SetupsService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
-import org.springframework.ai.support.ToolCallbacks;
-import org.springframework.ai.tool.ToolCallback;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,12 +19,6 @@ public class AiConfigsService {
   private final SetupsService setupsService;
 
   private final ConfiguredOllamaServers configuredOllamaServers;
-
-  private final ChatMemory chatMemory = MessageWindowChatMemory.builder()
-      .maxMessages(1000)
-      .build();
-
-  private static final String CHAT_CONVERSATION_ID = "default";
 
   public AiConfigsService(SetupsService setupsService, ConfiguredOllamaServers configuredOllamaServers) {
     this.setupsService = setupsService;
@@ -64,52 +46,6 @@ public class AiConfigsService {
 
     }
 
-  }
-
-
-  /**
-   * Sends the given prompt to the Ollama server specified by hostUrl
-   * and returns the model's text output.
-   *
-   * @param hostUrl    Base URL of the Ollama host, e.g. "http://localhost:11434"
-   * @param promptText Prompt text to send
-   * @return Model output text
-   */
-  public String aiChat(String hostUrl, String promptText) {
-
-    OllamaApi ollamaApi = OllamaApi.builder().baseUrl(hostUrl).build();
-
-    OllamaChatModel chatModel = OllamaChatModel.builder()
-        .ollamaApi(ollamaApi)
-        .build();
-
-    ToolCallback[] toolCallbacks = ToolCallbacks.from(new SetupQueryTool(setupsService));
-
-    List<Message> messages = chatMemory.get(CHAT_CONVERSATION_ID);
-    if (messages.isEmpty()) {
-      messages = new ArrayList<>();
-    }
-    UserMessage userMessage = new UserMessage(promptText);
-    messages.add(userMessage);
-
-    ChatResponse response = chatModel.call(
-        new Prompt(
-            messages,
-            OllamaOptions.builder()
-                .toolCallbacks(toolCallbacks)
-                .model("qwen3:30b-a3b")
-                .temperature(0.4)
-                .build()
-        ));
-    StringBuilder sb = new StringBuilder();
-    response.getResults().forEach(g -> {
-      sb.append(g.getOutput().getText());
-    });
-
-    String result = sb.toString();
-    chatMemory.add(CHAT_CONVERSATION_ID, List.of(userMessage, new AssistantMessage(result)));
-
-    return result;
   }
 
   public String handleCommand(String command) {

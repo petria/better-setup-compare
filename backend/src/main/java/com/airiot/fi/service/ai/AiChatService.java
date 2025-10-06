@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -47,10 +48,31 @@ public class AiChatService {
     long start = System.currentTimeMillis();
     log.debug("Sending chat request from user '{}'...", username);
     try {
-      ChatResponse response = client.prompt(getPrompt(modelName, promptText)).call().chatResponse();
+      ToolCallback[] toolCallbacks = ToolCallbacks.from(new SetupQueryTool(setupsService));
+
+      List<Message> messages = chatMemory.get(username);
+      if (messages.isEmpty()) {
+        messages = new ArrayList<>();
+        SystemMessage systemMessage = new SystemMessage(SYSTEM_PROMPT);
+        messages.add(systemMessage);
+      }
+
+      UserMessage userMessage = new UserMessage(promptText);
+      messages.add(userMessage);
+
+      Prompt prompt = new Prompt(messages,  OllamaOptions.builder()
+          .toolCallbacks(toolCallbacks)
+          .model(modelName) // "qwen3:30b-a3b"
+          .temperature(0.4)
+          .build()
+      );
+
+      ChatResponse response = client.prompt(prompt).call().chatResponse();
       Objects.requireNonNull(response).getResults().forEach(g -> {
         sb.append(g.getOutput().getText());
       });
+
+      chatMemory.add(username, List.of(userMessage, new AssistantMessage(sb.toString())));
 
     } catch (Exception e) {
       log.error("Error while sending chat request: {}", e.getMessage());
@@ -62,27 +84,6 @@ public class AiChatService {
     log.debug("Done sending chat request, handle took {} ms", duration);
 
     return sb.toString();
-  }
-
-  private Prompt getPrompt(String modelName, String promptText) {
-    ToolCallback[] toolCallbacks = ToolCallbacks.from(new SetupQueryTool(setupsService));
-
-    List<Message>  messages = new ArrayList<>();
-    SystemMessage systemMessage = new SystemMessage(SYSTEM_PROMPT);
-    messages.add(systemMessage);
-
-    UserMessage userMessage = new UserMessage(promptText);
-    messages.add(userMessage);
-
-
-    Prompt prompt = new Prompt(messages,  OllamaOptions.builder()
-        .toolCallbacks(toolCallbacks)
-        .model(modelName) // "qwen3:30b-a3b"
-        .temperature(0.4)
-        .build()
-    );
-
-    return prompt;
   }
 
 }
