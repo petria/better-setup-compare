@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AiService {
+public class AiConfigsService {
 
-  private static final Logger log = LoggerFactory.getLogger(AiService.class);
+  private static final Logger log = LoggerFactory.getLogger(AiConfigsService.class);
 
   private final SetupsService setupsService;
 
@@ -38,7 +38,7 @@ public class AiService {
 
   private static final String CHAT_CONVERSATION_ID = "default";
 
-  public AiService(SetupsService setupsService, ConfiguredOllamaServers configuredOllamaServers) {
+  public AiConfigsService(SetupsService setupsService, ConfiguredOllamaServers configuredOllamaServers) {
     this.setupsService = setupsService;
     this.configuredOllamaServers = configuredOllamaServers;
   }

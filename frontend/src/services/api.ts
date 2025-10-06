@@ -1,11 +1,5 @@
 import {CarForSelection, OllamaServerConfig, SetupForCarSelection, TrackForCarSelection} from '../types';
 
-export const getHello = async (): Promise<string> => {
-    const response = await fetch('/api/hello');
-    const data = await response.text();
-    return data;
-};
-
 export const getCars = async (): Promise<CarForSelection[]> => {
     const response = await fetch('/api/cars');
     return response.json();

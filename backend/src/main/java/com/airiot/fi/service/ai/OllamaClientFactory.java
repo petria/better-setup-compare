@@ -14,7 +14,6 @@ public class OllamaClientFactory {
   private final RetryTemplate retryTemplate;
 
   public OllamaClientFactory() {
-    // Configure retry once (1 initial + 1 retry)
     this.retryTemplate = RetryTemplate.builder()
         .maxAttempts(2)
         .fixedBackoff(500)

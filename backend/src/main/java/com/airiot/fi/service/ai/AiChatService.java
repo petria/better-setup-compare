@@ -5,6 +5,8 @@ import com.airiot.fi.service.SetupsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -20,25 +22,30 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class AiServiceDyn {
+public class AiChatService {
 
   private static final String SYSTEM_PROMPT = "You are helpful Assetto Corsa Sim Racing game expert that can analyze game car setup and give characteristic how setup effects car behaviour. When given multiple saved setup ini files you can analyze the differences between setups and  what is their difference in car driving.";
-  private static final Logger log = LoggerFactory.getLogger(AiServiceDyn.class);
+  private static final Logger log = LoggerFactory.getLogger(AiChatService.class);
 
   private final SetupsService setupsService;
   private final OllamaClientFactory factory;
 
-  public AiServiceDyn(SetupsService setupsService, OllamaClientFactory factory) {
+  private final ChatMemory chatMemory = MessageWindowChatMemory.builder()
+      .maxMessages(1000)
+      .build(); // TODO
+
+
+  public AiChatService(SetupsService setupsService, OllamaClientFactory factory) {
     this.setupsService = setupsService;
     this.factory = factory;
   }
 
-  public String ask(String hostUrl, String modelName, String promptText) {
+  public String ask(String username, String hostUrl, String modelName, String promptText) {
     ChatClient client = factory.createClient(hostUrl, modelName);
 
     StringBuilder sb = new StringBuilder();
     long start = System.currentTimeMillis();
-    log.debug("Sending chat request...");
+    log.debug("Sending chat request from user '{}'...", username);
     try {
       ChatResponse response = client.prompt(getPrompt(modelName, promptText)).call().chatResponse();
       Objects.requireNonNull(response).getResults().forEach(g -> {
@@ -53,7 +60,6 @@ public class AiServiceDyn {
     long end = System.currentTimeMillis();
     long duration = end - start;
     log.debug("Done sending chat request, handle took {} ms", duration);
-
 
     return sb.toString();
   }
@@ -77,7 +83,6 @@ public class AiServiceDyn {
     );
 
     return prompt;
-
   }
 
 }
