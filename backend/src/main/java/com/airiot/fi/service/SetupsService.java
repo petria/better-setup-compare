@@ -19,8 +19,8 @@ import static com.airiot.fi.config.StaticConfig.AC_SETUP_LOCAL_BASE_DIR;
 @Service
 public class SetupsService {
 
-
   private static final Logger log = org.slf4j.LoggerFactory.getLogger(SetupsService.class);
+
   private final SetupFilesReader reader;
 
   private Map<String, String> configKeyMapping;
@@ -31,8 +31,9 @@ public class SetupsService {
   private long carIdCounter = 0;
   private long trackIdCounter = 0;
 
-  private long iniIdCounter = 0;
+
   private Map<Long, SetupIniFile> setupIdMap = new HashMap<>();
+  private Map<Long, Car> carIdMap = new HashMap<>();
 
   private SetupIniFileScanStats stats = new SetupIniFileScanStats();
 
@@ -63,7 +64,6 @@ public class SetupsService {
 
     this.carIdCounter = 0;
     this.trackIdCounter = 0;
-    this.iniIdCounter = 0;
 
     configKeyMapping = reader.readConfigKeysMappingIniFile(AC_CONFIG_KEYS_MAP_FILE);
 
@@ -89,8 +89,8 @@ public class SetupsService {
         carModel.setCarName(carFileName);
         carModel.setCarFolderName(carFileName);
         this.setupsMap.put(carFileName, carModel);
+        this.carIdMap.put(carModel.getId(), carModel);
       }
-
 
       List<File> trackFiles = reader.scanForFolders(carFile.getAbsolutePath());
       for (File file : trackFiles) {
@@ -200,17 +200,19 @@ public class SetupsService {
 
   public List<CarForSelection> getCarListForSelection() {
     List<Car> carList1 = getCarList();
-    return carList1.stream().map(this::convertToCarForSelection).collect(Collectors.toList());
+    return carList1.stream().map(this::mapToCarForSelection).collect(Collectors.toList());
   }
 
-  private CarForSelection convertToCarForSelection(Car car) {
-    CarForSelection forSelection
-        = CarForSelection.builder()
-        .id(car.getId())
-        .carTracksWithSetup(car.getTracksWithSetup().size())
-        .carFolderName(car.getCarFolderName())
-        .carName(car.getCarName())
-        .build();
+  private CarForSelection mapToCarForSelection(Car car) {
+    CarForSelection forSelection = null;
+    if (car != null) {
+      forSelection = CarForSelection.builder()
+          .id(car.getId())
+          .carTracksWithSetup(car.getTracksWithSetup().size())
+          .carFolderName(car.getCarFolderName())
+          .carName(car.getCarName())
+          .build();
+    }
     return forSelection;
   }
 
@@ -243,49 +245,35 @@ public class SetupsService {
     String key = String.format("%s__%s", carFolderName, trackFolderName);
 
     SetupScanResults setupScanResults = this.resultsMap.get(key);
-    if  (setupScanResults != null) {
+    if (setupScanResults != null) {
       Stream<Long> sorted = setupScanResults.getSetupIdToIniFileMap().keySet().stream().sorted();
       for (Long setupId : sorted.toList()) {
         SetupIniFile setupIniFile = setupScanResults.getSetupIdToIniFileMap().get(setupId);
-        SetupForCarSelection forCarSelection
-            = SetupForCarSelection.builder()
-            .id(setupIniFile.getId())
-            .setupIniFileName(setupIniFile.getSetupIniFileName())
-            .build();
+        SetupForCarSelection forCarSelection = new SetupForCarSelection(setupIniFile.getId(), setupIniFile.getSetupIniFileName());
+        forCarSelection.setCarFolderName(carFolderName);
+        forCarSelection.setTrackFolderName(trackFolderName);
         list.add(forCarSelection);
       }
     }
-
-/*
-    Car car = this.setupsMap.get(carFolderName);
-    if (car != null) {
-      Track track = car.getTracksWithSetup().get(trackFolderName);
-      if (track != null) {
-        Stream<String> sorted = track.getIniFilesMap().keySet().stream().sorted();
-        int id = 0;
-        for (String setupKeyName : sorted.toList()) {
-          SetupForCarSelection forCarSelection
-              = SetupForCarSelection.builder()
-              .id(id++)
-              .setupIniFileName(setupKeyName)
-              .build();
-          list.add(forCarSelection);
-        }
-      }
-    }*/
     return list;
   }
 
-  public List<String> getSetupById(long setupId) {
+  public CarForSelection getCarById(long id) {
+    Car car = carIdMap.get(id);
+    return mapToCarForSelection(car);
+  }
+
+  public String getSetupById(long setupId) {
     SetupIniFile setupIniFile = this.setupIdMap.get(setupId);
+    StringBuilder sb = new StringBuilder();
     if (setupIniFile != null) {
       try {
-        return reader.readSetupFile(setupIniFile.getSetupFullPath());
+        reader.readSetupFile(setupIniFile.getSetupFullPath()).forEach(line -> sb.append(line).append("\n"));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
-    return new ArrayList<>();
+    return sb.toString();
   }
 
 

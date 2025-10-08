@@ -1,5 +1,7 @@
 export interface SetupForCarSelection {
     id: number;
+    carFolderName: string;
+    trackFolderName: string;
     setupIniFileName: string;
 }
 

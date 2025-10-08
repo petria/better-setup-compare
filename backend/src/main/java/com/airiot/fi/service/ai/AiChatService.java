@@ -48,7 +48,7 @@ public class AiChatService {
     long start = System.currentTimeMillis();
     log.debug("Sending chat request from user '{}'...", username);
     try {
-      ToolCallback[] toolCallbacks = ToolCallbacks.from(new SetupQueryTool(setupsService));
+      ToolCallback[] toolCallbacks = ToolCallbacks.from(new SetupDataQueryTool(setupsService));
 
       List<Message> messages = chatMemory.get(username);
       if (messages.isEmpty()) {

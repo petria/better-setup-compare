@@ -42,7 +42,7 @@ public class DataController {
   }
 
   @GetMapping("/setups/{setupId}")
-  public List<String> getSetupById(@PathVariable long setupId) {
+  public String getSetupById(@PathVariable long setupId) {
     return setupsService.getSetupById(setupId);
   }
 
