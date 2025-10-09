@@ -1,6 +1,6 @@
 # better-setup-compare
 
-Assetto Corsa sim racing game car setup ini file analyzer.
+Assetto Corsa Sim Racing game car setup ini file analyzer.
 
 In game, you can save car setup per car and track. Depending on car there are numerous settings
 that can be adjusted for example: tyre pressures, gear ratios, wing configuration, camber/toe angles etc.
@@ -23,4 +23,5 @@ Full Stack web application
 - use locally running Ollama instances to execute chat queries- 
 
 TODO:
-- Possible to configure multiple ollama hosts which (admin)user chooses what is used for running LLM.
+- Extract car data from data.acd binary file. 
+- Possible to configure multiple ollama hosts which (admin)user chooses what is used for running LLM:  [X] done
