@@ -26,9 +26,18 @@ public class SetupDataQueryTool {
   }
 
   @Tool(description = "Return car data by unique car id")
-  public CarForSelection getCarById(@ToolParam(description = "Car id number") long id) {
+  public String getCarById(@ToolParam(description = "Car id number") long id) {
     log.debug("tool called: getCarById({})", id);
-    return setupsService.getCarById(id);
+    CarForSelection car  = setupsService.getCarById(id);
+    String out =
+    """
+      car unique id: %d\s
+      car name: %s\s
+      car folder name: %s\s
+      how many tracks with setup this car has: %d 
+    """.formatted(car.getId(), car.getCarName(), car.getCarFolderName(), car.getCarTracksWithSetup());
+
+    return out;
   }
 
 }
