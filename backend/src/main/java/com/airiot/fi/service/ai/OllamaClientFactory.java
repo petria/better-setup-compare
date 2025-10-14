@@ -15,8 +15,7 @@ public class OllamaClientFactory {
 
   public OllamaClientFactory() {
     this.retryTemplate = RetryTemplate.builder()
-        .maxAttempts(2)
-        .fixedBackoff(500)
+        .noBackoff()
         .build();
   }
 
