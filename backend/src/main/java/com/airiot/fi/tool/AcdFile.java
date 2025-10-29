@@ -48,8 +48,6 @@ public class AcdFile {
     }
     if (i >= 50) {
       System.out.println("stopped creating files...clean some bak files!!!");
-      System.out.println("stopped creating files...clean some bak files!!!");
-      System.out.println("stopped creating files...clean some bak files!!!");
       return "";
     }
     return newname;
@@ -272,7 +270,7 @@ public class AcdFile {
   }
 
   public static void main(String[] args) {
-    String path = "/zstore/SteamLibrary/steamapps/common/assettocorsa/content/cars/208 gti_2016_track/data.acd";
+    String path = "/zstore/SteamLibrary/steamapps/common/assettocorsa/content/cars/ks_mclaren_650_gt3/data.acd";
     System.out.println("ACD_file v0.9");
 
 /*    switch (args.length) {
@@ -316,11 +314,11 @@ public class AcdFile {
       System.out.println("  Usage: java -jar acd_file.jar [acd-file/car-folder]");
     }
 
-    System.out.println("Finished. Press any key...");
+/*    System.out.println("Finished. Press any key...");
     try {
       System.in.read();
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 }
