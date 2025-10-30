@@ -1,13 +1,14 @@
 package com.airiot.fi.tool;
 
+import org.slf4j.Logger;
+
 import java.io.*;
 import java.net.URI;
-import java.nio.charset.StandardCharsets; // ADDED: for explicit string decoding
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 
 public class AcdFile {
+
+  private static final Logger log = org.slf4j.LoggerFactory.getLogger(AcdFile.class);
 
   private static String makeRelative(String filePath, String referencePath) {
     if (filePath != null && !filePath.isEmpty() && referencePath != null && !referencePath.isEmpty()) {
@@ -31,9 +32,7 @@ public class AcdFile {
       i++;
     }
     if (i >= 50) {
-      System.out.println("stopped creating dirs...clean some bak files!!!");
-      System.out.println("stopped creating dirs...clean some bak files!!!");
-      System.out.println("stopped creating dirs...clean some bak files!!!");
+      log.debug("stopped creating dirs...clean some bak files!!!");
       return "";
     }
     return newname;
@@ -47,7 +46,7 @@ public class AcdFile {
       i++;
     }
     if (i >= 50) {
-      System.out.println("stopped creating files...clean some bak files!!!");
+      log.debug("stopped creating files...clean some bak files!!!");
       return "";
     }
     return newname;
@@ -125,8 +124,8 @@ public class AcdFile {
     String basedir = path.replace(File.separator + "data.acd", "");
     String key = generate_key(carname.toLowerCase());
     String acdfile = carname + File.separator + "data.acd ...";
-    System.out.println("Reading " + acdfile);
-    System.out.println("key: " + key);
+    log.debug("Reading " + acdfile);
+    log.debug("key: " + key);
     acdfile = basedir + File.separator + "data.acd";
 
     File dataDir = new File(basedir + File.separator + "data");
@@ -194,16 +193,16 @@ public class AcdFile {
 
             fall++;
             falllen += fLen;
-            System.out.println(String.format("%5d byte - %32s", fLen, fName));
+            log.debug(String.format("%5d byte - %32s", fLen, fName));
             try (FileOutputStream outstream = new FileOutputStream(basedir + File.separator + "data" + File.separator + fName)) {
               outstream.write(unpacked_content, 0, fLen);
             }
             offset += 4;
           }
-          System.out.println("Unpacked " + fall + " files, " + falllen + " bytes");
+          log.debug("Unpacked " + fall + " files, " + falllen + " bytes");
         }
       } else {
-        System.out.println("  empty acd-file");
+        log.debug("  empty acd-file");
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -216,12 +215,12 @@ public class AcdFile {
     String basedir = acdfilepath.replace(File.separator + "data.acd", "");
     String key = generate_key(carname.toLowerCase());
 
-    System.out.println("Writing 'data.acd' ...");
-    System.out.println("key: " + key);
+    log.debug("Writing 'data.acd' ...");
+    log.debug("key: " + key);
 
     File dataDir = new File(basedir + File.separator + "data");
     if (!dataDir.exists()) {
-      System.out.println("Path not found: " + basedir + File.separator + "data");
+      log.debug("Path not found: " + basedir + File.separator + "data");
       return false;
     }
     File[] inputFiles = dataDir.listFiles();
@@ -242,7 +241,7 @@ public class AcdFile {
       long fall = 0;
       for (File f2 : inputFiles) {
         String f1 = f2.getName();
-        System.out.println(f1);
+        log.debug(f1);
 
         writer.writeInt(Integer.reverseBytes(f1.length()));
         writer.writeBytes(f1);
@@ -261,7 +260,7 @@ public class AcdFile {
           }
         }
       }
-      System.out.println("Packed " + inputFiles.length + " files, " + fall + " bytes -> " + carname + "/data.acd, " + stream.getChannel().size());
+      log.debug("Packed " + inputFiles.length + " files, " + fall + " bytes -> " + carname + "/data.acd, " + stream.getChannel().size());
     } catch (IOException e) {
       e.printStackTrace();
       return false;
@@ -271,21 +270,7 @@ public class AcdFile {
 
   public static void main(String[] args) {
     String path = "/zstore/SteamLibrary/steamapps/common/assettocorsa/content/cars/ks_mclaren_650_gt3/data.acd";
-    System.out.println("ACD_file v0.9");
-
-/*    switch (args.length) {
-      case 0:
-        path = System.getProperty("user.dir");
-        System.out.println("Using current folder...");
-        break;
-      case 1:
-        path = args[0];
-        break;
-      default:
-        System.out.println("Invalid input file/folder: " + path + "\n");
-        System.out.println("  Usage: java -jar acd_file.jar [acd-file/car-folder]");
-        break;
-    }*/
+    log.debug("ACD_file v0.9");
 
     File file = new File(path);
     String dirname = file.getAbsolutePath();
@@ -295,7 +280,7 @@ public class AcdFile {
       if (file.exists()) {
         acdUnpack(path, dirname);
       } else {
-        System.out.println("  File not found: " + path);
+        log.debug("  File not found: " + path);
       }
     } else if (file.isDirectory()) {
       if (!path.endsWith(File.separator)) {
@@ -310,15 +295,9 @@ public class AcdFile {
       }
       acdPack(path + "data.acd", dirname);
     } else {
-      System.out.println("Invalid input file/folder: " + path + "\n");
-      System.out.println("  Usage: java -jar acd_file.jar [acd-file/car-folder]");
+      log.debug("Invalid input file/folder: " + path + "\n");
+      log.debug("  Usage: java -jar acd_file.jar [acd-file/car-folder]");
     }
 
-/*    System.out.println("Finished. Press any key...");
-    try {
-      System.in.read();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }*/
   }
 }
