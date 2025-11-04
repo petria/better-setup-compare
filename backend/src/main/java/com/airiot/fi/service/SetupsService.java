@@ -62,6 +62,7 @@ public class SetupsService {
 
     long start = System.currentTimeMillis();
 
+
     this.carIdCounter = 0;
     this.trackIdCounter = 0;
 
