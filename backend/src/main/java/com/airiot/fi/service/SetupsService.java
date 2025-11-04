@@ -65,6 +65,7 @@ public class SetupsService {
     this.carIdCounter = 0;
     this.trackIdCounter = 0;
 
+
     configKeyMapping = reader.readConfigKeysMappingIniFile(AC_CONFIG_KEYS_MAP_FILE);
 
     String scanDir = setupLocalBaseDir;
