@@ -1,15 +1,11 @@
 package com.airiot.fi.controller;
 
-import com.airiot.fi.model.ini.carselector.CarForSelection;
-import com.airiot.fi.model.ini.carselector.SetupForCarSelection;
-import com.airiot.fi.model.ini.carselector.TrackForCarSelection;
+import com.airiot.fi.model.ini.carselector.*;
 import com.airiot.fi.service.SetupsService;
 import org.slf4j.Logger;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -46,5 +42,8 @@ public class DataController {
     return setupsService.getSetupById(setupId);
   }
 
-
+  @PostMapping("/setups/compare")
+  public CompareSetupsResponse compareSetups(@RequestBody CompareSetupsRequest request) throws IOException {
+    return setupsService.compareSetups(request.getSetupIds());
+  }
 }

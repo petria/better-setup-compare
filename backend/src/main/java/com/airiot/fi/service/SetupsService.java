@@ -279,30 +279,39 @@ public class SetupsService {
   }
 
 
-  private Map<String, String> getSetupIniValues(String selected) throws IOException {
-    String[] split = selected.split(" / ");
+  private Map<String, String> getSetupIniValues(long setupId) throws IOException {
+/*    String[] split = selected.split(" / ");
     if (split.length != 3) {
       return new HashMap<>();
     }
     String key = String.format("%s__%s", split[0], split[1]);
-
     SetupScanResults setupScanResults = resultsMap.get(key);
     String iniBase = setupScanResults.getIniFilesMap().get(split[2]);
+*/
 
-    return reader.parseValues(reader.readSetupFile(iniBase));
+    SetupIniFile setupIniFile = this.setupIdMap.get(setupId);
+    log.debug("read ini values: {}", setupIniFile.getSetupIniFileName());
+    return reader.parseValues(reader.readSetupFile(setupIniFile.getSetupFullPath()));
   }
 
-  public CompareSetupsResponse compareSetups(List<IniSections> iniList) throws IOException {
+  class IniValues {
+    private long setupId;
+    Map<String, String> iniValueMap = new HashMap<>();
+
+  }
+
+
+  public CompareSetupsResponse compareSetups(List<Long> setupIdList) throws IOException {
 
     List<CompareDifference> differenceList = new ArrayList<>();
-    Map<String, String> baseValues = getSetupIniValues(iniList.get(0).getSelected());
+    Map<String, String> baseValues = getSetupIniValues(setupIdList.getFirst());
 
     List<Map<String, String>> otherValuesList = new ArrayList<>();
-    for (int i = 0; i < iniList.size(); i++) {
+    for (int i = 0; i < setupIdList.size(); i++) {
       if (i == 0) {
         continue; // skip 1st which is base values
       }
-      Map<String, String> otherValues = getSetupIniValues(iniList.get(i).getSelected());
+      Map<String, String> otherValues = getSetupIniValues(setupIdList.get(i));
       otherValuesList.add(otherValues);
     }
 
