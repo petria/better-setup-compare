@@ -32,3 +32,10 @@ export interface OllamaServerConfig {
   status: string;
   availableModelNames: string[];
 }
+
+export interface ComparisonItem {
+    id: number;
+    car: CarForSelection;
+    track: TrackForCarSelection;
+    setup: SetupForCarSelection;
+}

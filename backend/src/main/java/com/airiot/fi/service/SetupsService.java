@@ -13,8 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.airiot.fi.config.StaticConfig.AC_CONFIG_KEYS_MAP_FILE;
-import static com.airiot.fi.config.StaticConfig.AC_SETUP_LOCAL_BASE_DIR;
+import static com.airiot.fi.config.StaticConfig.*;
 
 @Service
 public class SetupsService {
@@ -24,6 +23,9 @@ public class SetupsService {
   private final SetupFilesReader reader;
 
   private Map<String, String> configKeyMapping;
+  private Map<String, String> configKeyJsonMapping;
+
+
   private Map<String, SetupScanResults> resultsMap = new HashMap<>();
 
   private Map<String, Car> setupsMap = new HashMap<>();
@@ -68,6 +70,7 @@ public class SetupsService {
 
 
     configKeyMapping = reader.readConfigKeysMappingIniFile(AC_CONFIG_KEYS_MAP_FILE);
+    configKeyJsonMapping = reader.readConfigKeysMappingJson(AC_CONFIG_KEYS_MAP_JSON_FILE);
 
     String scanDir = setupLocalBaseDir;
     stats.setScanDir(scanDir);
@@ -319,7 +322,7 @@ public class SetupsService {
 
       List<Map<String, List<String>>> differenceMapList = new ArrayList<>();
       for (Map<String, String> otherValues : otherValuesList) {
-        SetupIniComparator comparator = new SetupIniComparator(configKeyMapping);
+        SetupIniComparator comparator = new SetupIniComparator(configKeyMapping, configKeyJsonMapping);
         Map<String, List<String>> differenceMap = comparator.compare(baseValues, otherValues);
         differenceMapList.add(differenceMap);
       }

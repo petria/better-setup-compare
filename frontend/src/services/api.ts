@@ -46,3 +46,14 @@ export const sendChatMessage = async (prompt: string, serverUrl: string): Promis
     });
     return response.text();
 };
+
+export const compareSetups = async (setupIds: number[]): Promise<any> => {
+    const response = await fetch('/api/setups/compare', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({setupIds}),
+    });
+    return response.json();
+};

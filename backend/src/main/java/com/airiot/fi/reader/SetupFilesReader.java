@@ -1,11 +1,14 @@
 package com.airiot.fi.reader;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,11 +70,19 @@ public class SetupFilesReader {
 
       Set<String> configKeysByGroup = configKeyGroups.computeIfAbsent(split[1], k -> new TreeSet<>());
       configKeysByGroup.add(split[0]);
-
-
     }
-
     return keyToConfigGroup;
+  }
+
+  public Map<String, String> readConfigKeysMappingJson(String mappingIniFileName) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+
+    Path p = Paths.get(mappingIniFileName);
+    Map<String, String> map = mapper.readValue(p.toFile(),
+        new TypeReference<Map<String, String>>() {});
+
+
+    return map;
   }
 
   public Map<String, String> getKeyToConfigGroup() {

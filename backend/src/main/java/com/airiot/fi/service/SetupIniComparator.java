@@ -11,9 +11,11 @@ public class SetupIniComparator {
 
   private static final Logger log = org.slf4j.LoggerFactory.getLogger(SetupIniComparator.class);
   private final Map<String, String> configKeyMapping;
+  private final Map<String, String> configKeyJsonMapping;
 
-  public SetupIniComparator(Map<String, String> configKeyMapping) {
+  public SetupIniComparator(Map<String, String> configKeyMapping, Map<String, String> configKeyJsonMapping) {
     this.configKeyMapping = configKeyMapping;
+    this.configKeyJsonMapping = configKeyJsonMapping;
   }
 
   public Map<String, List<String>> compare(Map<String, String> base, Map<String, String> other) {

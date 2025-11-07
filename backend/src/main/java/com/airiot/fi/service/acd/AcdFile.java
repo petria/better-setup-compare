@@ -1,4 +1,4 @@
-package com.airiot.fi.tool;
+package com.airiot.fi.service.acd;
 
 import org.slf4j.Logger;
 
@@ -272,8 +272,8 @@ public class AcdFile {
     return "TODO!";
   }
 
-  public static void main(String[] args) {
-    String path = "/zstore/SteamLibrary/steamapps/common/assettocorsa/content/cars/ks_mclaren_650_gt3/data.acd";
+  public static void handleAcdFile(String path) {
+//    String path = "/zstore/SteamLibrary/steamapps/common/assettocorsa/content/cars/ks_mclaren_650_gt3/data.acd";
     log.debug("ACD_file v0.9");
 
 
