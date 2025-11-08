@@ -360,7 +360,8 @@ public class SetupsService {
           key = key.substring(1, key.length() - 1);
           String group = this.configKeyJsonMapping.get(key);
           if (group == null) {
-            int foo = 0;
+            log.debug("GROUP NULL: {}", key);
+            group = "GENERIC";
           }
           SetupDifferenceGroup baseSetupDifferenceGroup = baseDifferenceGroups.get(group);
           if  (baseSetupDifferenceGroup == null) {
