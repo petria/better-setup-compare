@@ -1,5 +1,9 @@
 package com.airiot.fi.service;
 
+import com.airiot.fi.model.difference.CarSetupDifferences;
+import com.airiot.fi.model.difference.CompareSetupsResponse;
+import com.airiot.fi.model.difference.SetupDifference;
+import com.airiot.fi.model.difference.SetupDifferenceGroup;
 import com.airiot.fi.model.ini.carselector.*;
 import com.airiot.fi.model.ini.scan.*;
 import com.airiot.fi.reader.SetupFilesReader;
@@ -306,11 +310,26 @@ public class SetupsService {
 
   public CompareSetupsResponse compareSetups(List<Long> setupIdList) throws IOException {
 
-    List<CompareDifference> differenceList = new ArrayList<>();
-    Map<String, String> baseValues = getSetupIniValues(setupIdList.getFirst());
+    CompareSetupsResponse response = new CompareSetupsResponse();
+    List<CarSetupDifferences> carSetupDifferencesList = new ArrayList<>();
+    response.setCarSetupDifferences(carSetupDifferencesList);
+
+//    List<CompareDifference> differenceList = new ArrayList<>();
+//    Map<String, String> baseValues = getSetupIniValues(setupIdList.getFirst());
 
     List<Map<String, String>> otherValuesList = new ArrayList<>();
     for (int i = 0; i < setupIdList.size(); i++) {
+
+      CarSetupDifferences carSetupDifferences = new CarSetupDifferences();
+      SetupIniFile baseSetupIniFile = this.setupIdMap.get(setupIdList.get(i));
+
+      carSetupDifferences.setSetupId(setupIdList.get(i));
+      carSetupDifferences.setCarFolderName(baseSetupIniFile.getCarFolderName());
+      carSetupDifferences.setSetupDifferenceGroups(new ArrayList<>());
+      carSetupDifferences.setIniValues(getSetupIniValues(setupIdList.get(i)));
+
+      carSetupDifferencesList.add(carSetupDifferences);
+
       if (i == 0) {
         continue; // skip 1st which is base values
       }
@@ -318,65 +337,77 @@ public class SetupsService {
       otherValuesList.add(otherValues);
     }
 
-    if (baseValues != null && !otherValuesList.isEmpty()) {
 
-      List<Map<String, List<String>>> differenceMapList = new ArrayList<>();
-      for (Map<String, String> otherValues : otherValuesList) {
+    if (carSetupDifferencesList.size() > 1) {
+
+//      List<Map<String, List<String>>> differenceMapList = new ArrayList<>();
+
+      CarSetupDifferences baseCarSetupDifferences = carSetupDifferencesList.getFirst();
+      for (int i = 0; i < carSetupDifferencesList.size(); i++) {
+        if (i == 0) {
+          continue;  // skip 1st which is base values
+        }
+        CarSetupDifferences otherCarSetupDifferences = carSetupDifferencesList.get(i);
         SetupIniComparator comparator = new SetupIniComparator(configKeyMapping, configKeyJsonMapping);
-        Map<String, List<String>> differenceMap = comparator.compare(baseValues, otherValues);
-        differenceMapList.add(differenceMap);
-      }
 
+        Map<String, List<String>> differenceMap = comparator.compare(baseCarSetupDifferences.getIniValues(), otherCarSetupDifferences.getIniValues());
 
-      Stream<String> sortedKeys = reader.getConfigKeyGroups().keySet().stream().sorted();
-      for (String groupKey : sortedKeys.toList()) {
+        Map<String, SetupDifferenceGroup> baseDifferenceGroups = new TreeMap<>();
+        Map<String, SetupDifferenceGroup> otherDifferenceGroups = new TreeMap<>();
 
-        Set<String> configKeyStrings = reader.getConfigKeyGroups().get(groupKey);
-        for (String configKey : configKeyStrings) {
-          String hasDiff = "";
-
-          Map<String, List<String>> differenceMap = differenceMapList.get(0);
-          List<String> difference = differenceMap.get(configKey);
-
-          List<String> list = new ArrayList<>();
-          list.add(groupKey);
-          list.add(configKey);
-
-          if (difference != null) {
-            list.add(difference.get(0));
-            list.add(difference.get(1));
-
-            hasDiff += "1";
-
-          } else {
-            hasDiff += "0";
-            list.add("-");
-            list.add("-");
+        for (String key : differenceMap.keySet()) {
+          List<String> differenceValues = differenceMap.get(key);
+          key = key.substring(1, key.length() - 1);
+          String group = this.configKeyJsonMapping.get(key);
+          if (group == null) {
+            int foo = 0;
+          }
+          SetupDifferenceGroup baseSetupDifferenceGroup = baseDifferenceGroups.get(group);
+          if  (baseSetupDifferenceGroup == null) {
+            baseSetupDifferenceGroup = new SetupDifferenceGroup();
+            baseSetupDifferenceGroup.setSetupDifferences(new ArrayList<>());
+            baseSetupDifferenceGroup.setSetupGroupName(group);
+            baseDifferenceGroups.put(group, baseSetupDifferenceGroup);
           }
 
-          for (int i = 0; i < differenceMapList.size(); i++) {
-            if (i == 0) {
-              continue; // SKIP 1st already handled
-            }
-            differenceMap = differenceMapList.get(i);
-            difference = differenceMap.get(configKey);
-            if (difference != null) {
-              list.add(difference.get(1));
-              hasDiff += "1";
-            } else {
-              hasDiff += "0";
-              list.add("-");
-            }
+          SetupDifferenceGroup otherSetupDifferenceGroup = otherDifferenceGroups.get(group);
+          if (otherSetupDifferenceGroup == null) {
+            otherSetupDifferenceGroup = new SetupDifferenceGroup();
+            otherSetupDifferenceGroup.setSetupDifferences(new ArrayList<>());
+            otherSetupDifferenceGroup.setSetupGroupName(group);
+            otherDifferenceGroups.put(group, otherSetupDifferenceGroup);
           }
-          if (hasDiff.indexOf("0") == -1) {
-            differenceList.add(CompareDifference.builder().differences(list).build());
-          }
+
+          SetupDifference baseSetupDifference = new SetupDifference(key, differenceValues.get(0), "0");
+          baseSetupDifferenceGroup.getSetupDifferences().add(baseSetupDifference);
+
+          SetupDifference otherSetupDifference = new SetupDifference(key, differenceValues.get(1), calcDifference(differenceValues.get(0), differenceValues.get(1)));
+          otherSetupDifferenceGroup.getSetupDifferences().add(otherSetupDifference);
+
+          int foo = 0;
 
         }
-      }
-    }
 
-    return CompareSetupsResponse.builder().differences(differenceList).build();
+        baseCarSetupDifferences.setSetupDifferenceGroups(new ArrayList<>(baseDifferenceGroups.values()));
+        otherCarSetupDifferences.setSetupDifferenceGroups(new ArrayList<>(otherDifferenceGroups.values()));
+
+      }
+
+    }
+    return response;
+  }
+
+  private String calcDifference(String value1, String value2) {
+    try {
+      int num1 = Integer.parseInt(value1.split("=")[1].trim());
+      int num2 = Integer.parseInt(value2.split("=")[1].trim());
+
+      // Return the difference
+      return "" + (num2 - num1);
+
+    } catch (NumberFormatException e) {
+      return "N/A";
+    }
   }
 
 }

@@ -1,6 +1,7 @@
 package com.airiot.fi.service;
 
-import com.airiot.fi.model.ini.carselector.CompareSetupsResponse;
+import com.airiot.fi.model.difference.CompareSetupsResponse;
+import com.airiot.fi.model.ini.carselector.CompareSetupsResponseOld;
 import com.airiot.fi.reader.SetupFilesReader;
 import com.airiot.fi.service.acd.AcdFileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,10 +31,11 @@ class SetupsServiceTest {
     setupsService.doInitialScan();
 
     List<Long> setupIdList = new ArrayList<>();
-    setupIdList.add(100L);
-    setupIdList.add(200L);
+    setupIdList.add(3270L);
+    setupIdList.add(3271L);
 
-    CompareSetupsResponse compareSetupsResponse = setupsService.compareSetups(setupIdList);
+    CompareSetupsResponse compareSetupsResponseOld = setupsService.compareSetups(setupIdList);
+    int foo = 0;
 
   }
 

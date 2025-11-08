@@ -3,11 +3,11 @@ package com.airiot.fi.model.ini.carselector;
 
 import java.util.List;
 
-public class CompareSetupsResponse {
+public class CompareSetupsResponseOld {
 
   private List<CompareDifference> differences;
 
-  CompareSetupsResponse(List<CompareDifference> differences) {
+  CompareSetupsResponseOld(List<CompareDifference> differences) {
     this.differences = differences;
   }
 
@@ -25,8 +25,8 @@ public class CompareSetupsResponse {
 
   public boolean equals(final Object o) {
     if (o == this) return true;
-    if (!(o instanceof CompareSetupsResponse)) return false;
-    final CompareSetupsResponse other = (CompareSetupsResponse) o;
+    if (!(o instanceof CompareSetupsResponseOld)) return false;
+    final CompareSetupsResponseOld other = (CompareSetupsResponseOld) o;
     if (!other.canEqual((Object) this)) return false;
     final Object this$differences = this.getDifferences();
     final Object other$differences = other.getDifferences();
@@ -36,7 +36,7 @@ public class CompareSetupsResponse {
   }
 
   protected boolean canEqual(final Object other) {
-    return other instanceof CompareSetupsResponse;
+    return other instanceof CompareSetupsResponseOld;
   }
 
   public int hashCode() {
@@ -62,8 +62,8 @@ public class CompareSetupsResponse {
       return this;
     }
 
-    public CompareSetupsResponse build() {
-      return new CompareSetupsResponse(this.differences);
+    public CompareSetupsResponseOld build() {
+      return new CompareSetupsResponseOld(this.differences);
     }
 
     public String toString() {

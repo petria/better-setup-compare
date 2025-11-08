@@ -1,5 +1,7 @@
 package com.airiot.fi.controller;
 
+import com.airiot.fi.model.difference.CompareSetupsRequest;
+import com.airiot.fi.model.difference.CompareSetupsResponse;
 import com.airiot.fi.model.ini.carselector.*;
 import com.airiot.fi.service.SetupsService;
 import org.slf4j.Logger;
