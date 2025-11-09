@@ -46,6 +46,7 @@ public class DataController {
 
   @PostMapping("/setups/compare")
   public CompareSetupsResponse compareSetups(@RequestBody CompareSetupsRequest request) throws IOException {
+    log.debug("compareSetups called with request: {}", request);
     return setupsService.compareSetups(request.getSetupIds());
   }
 }
